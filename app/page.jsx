@@ -2,6 +2,14 @@
 
 import { useState, useEffect } from "react";
 
+/* =========================================================
+   Tomazela | Estratégia & Comunicação — Página única
+   - Logos com proporção correta
+   - Hero com imagem remota
+   - Serviços com ícones SVG embutidos (sem dependências)
+   - Foto do André com object-contain (não corta o rosto)
+   ========================================================= */
+
 const nav = [
   { href: "#servicos", label: "Serviços" },
   { href: "#insight", label: "Insight Flow" },
@@ -9,13 +17,65 @@ const nav = [
   { href: "#contato", label: "Contato" },
 ];
 
+// SVGs simples, leves e na cor da marca
+const Icon = {
+  Press: (props) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7" {...props}>
+      <rect x="3" y="4" width="18" height="14" rx="2"></rect>
+      <line x1="7" y1="8" x2="17" y2="8"></line>
+      <line x1="7" y1="12" x2="17" y2="12"></line>
+      <line x1="7" y1="16" x2="12" y2="16"></line>
+    </svg>
+  ),
+  Social: (props) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7" {...props}>
+      <circle cx="7" cy="7" r="3"></circle>
+      <circle cx="17" cy="7" r="3"></circle>
+      <circle cx="12" cy="17" r="3"></circle>
+      <line x1="9" y1="9" x2="11" y2="14"></line>
+      <line x1="15" y1="9" x2="13" y2="14"></line>
+    </svg>
+  ),
+  Influencers: (props) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7" {...props}>
+      <circle cx="8" cy="8" r="3"></circle>
+      <circle cx="16" cy="8" r="3"></circle>
+      <path d="M2 20c1.5-3 4-5 6-5s4.5 2 6 5"></path>
+      <path d="M14 14c1.5 0 4.5 2 6 5"></path>
+    </svg>
+  ),
+  Events: (props) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7" {...props}>
+      <rect x="3" y="4" width="18" height="17" rx="2"></rect>
+      <line x1="8" y1="2" x2="8" y2="6"></line>
+      <line x1="16" y1="2" x2="16" y2="6"></line>
+      <line x1="3" y1="10" x2="21" y2="10"></line>
+      <rect x="7" y="13" width="4" height="3" rx="0.5"></rect>
+      <rect x="13" y="13" width="4" height="3" rx="0.5"></rect>
+    </svg>
+  ),
+  Content: (props) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7" {...props}>
+      <path d="M4 4h12l4 4v12a2 2 0 0 1-2 2H4z"></path>
+      <path d="M16 4v4h4"></path>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+      <line x1="8" y1="16" x2="16" y2="16"></line>
+    </svg>
+  ),
+  Custom: (props) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7" {...props}>
+      <path d="M12 2l3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"></path>
+    </svg>
+  ),
+};
+
 const servicos = [
-  { title: "Relações com a imprensa", desc: "Criação de pautas e materiais estratégicos para fortalecer sua marca na mídia." },
-  { title: "Redes sociais", desc: "Planejamento e execução do conteúdo alinhado ao seu público." },
-  { title: "Parcerias com influenciadores", desc: "Conexões estratégicas para amplificar sua mensagem." },
-  { title: "Planejamento de eventos", desc: "Organização e divulgação de ações que destaquem sua marca." },
-  { title: "Criação de conteúdo", desc: "Artigos, textos e materiais que posicionam sua organização no mercado." },
-  { title: "O que mais você precisa?", desc: "Montamos um pacote sob medida, de acordo com suas necessidades." },
+  { icon: <Icon.Press />, title: "Relações com a imprensa", desc: "Criação de pautas e materiais estratégicos para fortalecer sua marca na mídia." },
+  { icon: <Icon.Social />, title: "Redes sociais", desc: "Planejamento e execução de conteúdo alinhado ao seu público." },
+  { icon: <Icon.Influencers />, title: "Parcerias com influenciadores", desc: "Conexões estratégicas para amplificar sua mensagem." },
+  { icon: <Icon.Events />, title: "Planejamento de eventos", desc: "Organização e divulgação de ações que destaquem sua marca." },
+  { icon: <Icon.Content />, title: "Criação de conteúdo", desc: "Artigos, textos e materiais que posicionam sua organização no mercado." },
+  { icon: <Icon.Custom />, title: "O que mais você precisa?", desc: "Montamos um pacote sob medida, de acordo com suas necessidades." },
 ];
 
 const depoimentos = [
@@ -34,13 +94,11 @@ export default function Home() {
 
   const onNavClick = (e, href) => {
     e.preventDefault();
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    document.querySelector(href)?.scrollIntoView({ behavior: "smooth", block: "start" });
     setOpen(false);
   };
 
   useEffect(() => {
-    // fecha o menu ao redimensionar para desktop
     const onResize = () => { if (window.innerWidth >= 768) setOpen(false); };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
@@ -55,7 +113,7 @@ export default function Home() {
             {/* LOGO: largura controlada + object-contain */}
             <div className="w-[200px] md:w-[260px]">
               <img
-                src="/logo-tomazela.png?v=7"
+                src="/logo-tomazela.png?v=8"
                 alt="Logo Tomazela | Estratégia & Comunicação"
                 className="block w-full h-auto object-contain"
               />
@@ -116,8 +174,9 @@ export default function Home() {
             <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a>
           </p>
         </div>
+
+        {/* Imagem remota estável (não depende de arquivo local) */}
         <div className="rounded-xl shadow-lg overflow-hidden">
-          {/* Imagem remota (não depende de arquivo local) */}
           <img
             src="https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=1600&auto=format&fit=crop"
             alt="Equipe em reunião criativa"
@@ -138,6 +197,7 @@ export default function Home() {
           <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {servicos.map((s, i) => (
               <div key={i} className="bg-white rounded-xl border p-5 shadow-sm hover:shadow-md transition">
+                <div className="mb-3">{s.icon}</div>
                 <h3 className="font-semibold">{s.title}</h3>
                 <p className="text-sm text-gray-600 mt-2">{s.desc}</p>
               </div>
@@ -167,15 +227,16 @@ export default function Home() {
       {/* QUEM SOMOS */}
       <section id="sobre" className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-10 items-center">
-          <div className="rounded-2xl overflow-hidden shadow">
-            {/* sua foto que está em /public */}
+          {/* Sua foto SEM cortar o rosto */}
+          <div className="rounded-2xl overflow-hidden shadow bg-white flex items-center justify-center">
             <img
               src="/AE4C2D2A-8E9D-438F-A285-37420BCDA4FF.jpeg"
               alt="André Tomazela"
-              className="block w-full h-full object-cover max-h-[420px]"
+              className="block w-full h-auto object-contain max-h-[480px]"
               loading="lazy"
             />
           </div>
+
           <div>
             <h2 className="text-2xl md:text-3xl font-bold">Quem é André Tomazela</h2>
             <p className="mt-4 text-gray-700">
@@ -240,7 +301,7 @@ export default function Home() {
       <footer className="bg-[#FF4D00] py-10 text-center text-white">
         <div className="mx-auto mb-4 w-[220px] md:w-[300px]">
           <img
-            src="/logo-tomazela-br-fundotransp.png?v=7"
+            src="/logo-tomazela-br-fundotransp.png?v=8"
             alt="Logo Tomazela branco"
             className="block w-full h-auto object-contain"
           />
