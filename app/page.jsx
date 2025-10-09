@@ -80,12 +80,14 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <a href="#home" className="flex items-center gap-3 font-bold text-xl tracking-tight" onClick={(e)=>onNavClick(e,'#home')}>
             <div className="overflow-hidden h-12 md:h-16 flex items-center">
-  <img
-    src="/logo-tomazela.png?v=3"
-    alt="Logo Tomazela | Estratégia & Comunicação"
-    className="scale-125 md:scale-150 translate-x-2 w-auto"
-  />
-</div>
+ <a href="#home" className="flex items-center gap-3 font-bold text-xl tracking-tight" onClick={(e)=>onNavClick(e,'#home')}>
+  <div className="w-[180px] md:w-[240px]">
+    <img
+      src="/logo-tomazela.png?v=5"
+      alt="Logo Tomazela | Estratégia & Comunicação"
+      className="block w-full h-auto object-contain"
+    />
+  </div>
           </a>
           <nav className="hidden md:flex gap-6 text-sm">
             {nav.map((n) => (
@@ -228,10 +230,11 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-[#FF4D00] py-8 text-center">
         <div className="overflow-hidden h-14 md:h-20 flex justify-center items-center mb-4">
+  <div className="mx-auto mb-4 w-[200px] md:w-[260px]">
   <img
-    src="/logo-tomazela-br-fundotransp.png?v=3"
+    src="/logo-tomazela-br-fundotransp.png?v=5"
     alt="Logo Tomazela branco"
-    className="scale-125 md:scale-150 translate-x-1 w-auto"
+    className="block w-full h-auto object-contain"
   />
 </div>
         <p className="text-white text-sm">Santa Cecília | São Paulo-SP</p>
