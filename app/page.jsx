@@ -1,254 +1,256 @@
 "use client";
 
-import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+const nav = [
+  { href: "#servicos", label: "Serviços" },
+  { href: "#insight", label: "Insight Flow" },
+  { href: "#sobre", label: "Quem somos" },
+  { href: "#contato", label: "Contato" },
+];
+
+const servicos = [
+  { title: "Relações com a imprensa", desc: "Criação de pautas e materiais estratégicos para fortalecer sua marca na mídia." },
+  { title: "Redes sociais", desc: "Planejamento e execução do conteúdo alinhado ao seu público." },
+  { title: "Parcerias com influenciadores", desc: "Conexões estratégicas para amplificar sua mensagem." },
+  { title: "Planejamento de eventos", desc: "Organização e divulgação de ações que destaquem sua marca." },
+  { title: "Criação de conteúdo", desc: "Artigos, textos e materiais que posicionam sua organização no mercado." },
+  { title: "O que mais você precisa?", desc: "Montamos um pacote sob medida, de acordo com suas necessidades." },
+];
+
+const depoimentos = [
+  { quote: "Profissional ágil, estratégico e colaborativo. Nossas entregas ganharam clareza e tração.", author: "Erika Martins de Figueiredo", role: "via LinkedIn" },
+  { quote: "Visão integrada e capacidade de execução acima da média. Recomendo o trabalho.", author: "Elaine Nishiwaki", role: "via LinkedIn" },
+];
+
+const posts = [
+  { title: "Gaslighting no trabalho: como reconhecer e agir", date: "24/09/2025" },
+  { title: "Subjetividade sequestrada e saúde mental", date: "08/09/2025" },
+  { title: "Etarismo nas empresas: o preconceito invisível", date: "26/08/2025" },
+];
 
 export default function Home() {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
-  const onNavClick = (e, id) => {
+  const onNavClick = (e, href) => {
     e.preventDefault();
-    const el = document.querySelector(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-      setMenuOpen(false);
-    }
+    const el = document.querySelector(href);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    setOpen(false);
   };
 
+  useEffect(() => {
+    // fecha o menu ao redimensionar para desktop
+    const onResize = () => { if (window.innerWidth >= 768) setOpen(false); };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   return (
-    <main className="min-h-screen bg-white text-neutral-900">
+    <div className="min-h-screen bg-white text-gray-900">
       {/* HEADER */}
-      <header className="sticky top-0 z-50 bg-white border-b border-neutral-200">
-        <div className="max-w-6xl mx-auto flex justify-between items-center px-4 py-3">
-          <a
-            href="#home"
-            className="flex items-center gap-3 font-bold text-xl tracking-tight"
-            onClick={(e) => onNavClick(e, "#home")}
-          >
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-200">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+          <a href="#home" className="flex items-center gap-3" onClick={(e)=>onNavClick(e,'#home')}>
+            {/* LOGO: largura controlada + object-contain */}
             <div className="w-[200px] md:w-[260px]">
               <img
-                src="/logo-tomazela.png?v=6"
+                src="/logo-tomazela.png?v=7"
                 alt="Logo Tomazela | Estratégia & Comunicação"
                 className="block w-full h-auto object-contain"
               />
             </div>
           </a>
 
-          <nav className="hidden md:flex items-center gap-6 font-medium">
-            <a href="#servicos" onClick={(e) => onNavClick(e, "#servicos")}>
-              Serviços
-            </a>
-            <a href="#insight" onClick={(e) => onNavClick(e, "#insight")}>
-              Insight Flow
-            </a>
-            <a href="#sobre" onClick={(e) => onNavClick(e, "#sobre")}>
-              Quem somos
-            </a>
-            <a href="#contato" onClick={(e) => onNavClick(e, "#contato")}>
-              Contato
-            </a>
+          <nav className="hidden md:flex items-center gap-6 text-sm">
+            {nav.map(n => (
+              <a key={n.href} href={n.href} onClick={(e)=>onNavClick(e, n.href)} className="hover:text-[#FF4D00]">
+                {n.label}
+              </a>
+            ))}
             <a
               href="#contato"
-              onClick={(e) => onNavClick(e, "#contato")}
-              className="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition"
+              onClick={(e)=>onNavClick(e,'#contato')}
+              className="bg-[#FF4D00] text-white px-4 py-2 rounded-md hover:opacity-90 transition"
             >
               Fale com a gente
             </a>
           </nav>
+
+          <button className="md:hidden p-2 border rounded-md" onClick={()=>setOpen(!open)} aria-label="Abrir menu">☰</button>
         </div>
+
+        {open && (
+          <div className="md:hidden border-t">
+            <div className="px-4 py-3 flex flex-col gap-3">
+              {nav.map(n => (
+                <a key={n.href} href={n.href} onClick={(e)=>onNavClick(e,n.href)} className="py-1">
+                  {n.label}
+                </a>
+              ))}
+              <a href="#contato" onClick={(e)=>onNavClick(e,'#contato')} className="py-2 bg-[#FF4D00] text-white text-center rounded-md">
+                Fale com a gente
+              </a>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* HERO */}
-      <section id="home" className="max-w-6xl mx-auto px-4 py-20 grid md:grid-cols-2 gap-10">
+      <section id="home" className="max-w-6xl mx-auto px-4 py-16 md:py-24 grid md:grid-cols-2 gap-10 items-center">
         <div>
-          <h1 className="text-3xl md:text-5xl font-extrabold leading-tight mb-6">
+          <h1 className="text-3xl md:text-5xl font-extrabold leading-tight">
             Comunicação sob medida para marcas e organizações de impacto.
           </h1>
-          <p className="text-lg text-neutral-700 mb-6">
-            Estratégia que posiciona, conteúdo que entrega e relações que abrem
-            portas. Clareza, método e impacto em cada projeto.
+          <p className="mt-4 text-lg text-gray-700">
+            Estratégia que posiciona, conteúdo que entrega e relações que abrem portas.
+            Clareza, método e impacto em cada projeto.
           </p>
-          <a
-            href="#servicos"
-            onClick={(e) => onNavClick(e, "#servicos")}
-            className="inline-block bg-orange-500 text-white px-5 py-3 rounded-md hover:bg-orange-600 transition"
-          >
-            Ver serviços
-          </a>
-          <p className="text-sm text-neutral-500 mt-6">
-            São Paulo • Brasil •{" "}
-            <a
-              href="mailto:andre@andretomazela.com.br"
-              className="underline hover:text-orange-500"
-            >
-              andre@andretomazela.com.br
+          <div className="mt-6 flex gap-3">
+            <a href="#servicos" onClick={(e)=>onNavClick(e,'#servicos')} className="bg-[#FF4D00] text-white px-5 py-3 rounded-md hover:opacity-90">
+              Ver serviços
             </a>
+          </div>
+          <p className="mt-6 text-sm text-gray-600">
+            São Paulo • Brasil •{" "}
+            <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a>
           </p>
         </div>
-        <div className="flex justify-center md:justify-end">
+        <div className="rounded-xl shadow-lg overflow-hidden">
+          {/* Imagem remota (não depende de arquivo local) */}
           <img
-            src="/hero-meeting.jpg"
+            src="https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=1600&auto=format&fit=crop"
             alt="Equipe em reunião criativa"
-            className="rounded-lg shadow-lg w-full max-w-md object-cover"
+            className="block w-full h-full object-cover max-h-[320px]"
+            loading="lazy"
           />
         </div>
       </section>
 
       {/* SERVIÇOS */}
-      <section id="servicos" className="bg-neutral-50 py-20 px-4">
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">
-            O que podemos fazer por você
-          </h2>
-          <p className="text-neutral-600 mb-10">
-            Serviços pensados para empresas e organizações de impacto. Objetivo:
-            ampliar visibilidade, fortalecer reputação e criar relações
-            consistentes.
+      <section id="servicos" className="bg-gray-50 py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-2xl md:text-3xl font-bold">O que podemos fazer por você</h2>
+          <p className="mt-2 text-gray-600 max-w-prose">
+            Serviços pensados para empresas e organizações de impacto. Objetivo: ampliar visibilidade,
+            fortalecer reputação e criar relações consistentes.
           </p>
-
-          <div className="grid md:grid-cols-3 gap-6 text-left">
-            {[
-              {
-                title: "Relações com a imprensa",
-                text: "Criação de pautas e materiais estratégicos para fortalecer sua marca na mídia.",
-              },
-              {
-                title: "Redes sociais",
-                text: "Planejamento e execução de conteúdo alinhado ao seu público.",
-              },
-              {
-                title: "Parcerias com influenciadores",
-                text: "Conexões estratégicas para amplificar sua mensagem.",
-              },
-              {
-                title: "Planejamento de eventos",
-                text: "Organização e divulgação de ações que destaquem sua marca.",
-              },
-              {
-                title: "Criação de conteúdo",
-                text: "Artigos, textos e materiais que posicionam sua organização no mercado.",
-              },
-              {
-                title: "O que mais você precisa?",
-                text: "Montamos um pacote sob medida, de acordo com suas necessidades.",
-              },
-            ].map((item, i) => (
-              <div key={i} className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition">
-                <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
-                <p className="text-neutral-600">{item.text}</p>
+          <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {servicos.map((s, i) => (
+              <div key={i} className="bg-white rounded-xl border p-5 shadow-sm hover:shadow-md transition">
+                <h3 className="font-semibold">{s.title}</h3>
+                <p className="text-sm text-gray-600 mt-2">{s.desc}</p>
               </div>
             ))}
           </div>
-
-          <a
-            href="#contato"
-            onClick={(e) => onNavClick(e, "#contato")}
-            className="inline-block mt-10 bg-orange-500 text-white px-6 py-3 rounded-md hover:bg-orange-600 transition"
-          >
+          <a href="#contato" onClick={(e)=>onNavClick(e,'#contato')} className="inline-block mt-8 bg-[#FF4D00] text-white px-5 py-3 rounded-md hover:opacity-90">
             Montar meu pacote
           </a>
         </div>
       </section>
 
-      {/* SOBRE */}
-      <section id="sobre" className="max-w-6xl mx-auto px-4 py-20 grid md:grid-cols-2 gap-12 items-center">
-        <div>
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">
-            Quem é André Tomazela
-          </h2>
-          <p className="text-neutral-700 mb-4">
-            Jornalista e estrategista de comunicação com experiência em
-            empresas, agências e projetos editoriais. Entrega clara, sem
-            enrolação, com foco em resultado.
-          </p>
-          <p className="text-neutral-700 mb-6">
-            Pós-graduado em Gestão da Comunicação em Mídias Digitais (Senac-SP).
-            Reportagens e especiais para o Valor Econômico. Atuação com
-            organizações de impacto e negócios.
-          </p>
-          <a
-            href="#contato"
-            onClick={(e) => onNavClick(e, "#contato")}
-            className="bg-orange-500 text-white px-5 py-3 rounded-md hover:bg-orange-600 transition"
-          >
-            Falar com o André
-          </a>
+      {/* O QUE DIZEM */}
+      <section id="legado" className="py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-2xl md:text-3xl font-bold">O que dizem sobre nosso trabalho</h2>
+          <div className="mt-8 grid md:grid-cols-2 gap-6">
+            {depoimentos.map((d, i) => (
+              <figure key={i} className="p-6 rounded-xl border bg-gray-50">
+                <blockquote className="italic text-gray-800">“{d.quote}”</blockquote>
+                <figcaption className="mt-4 text-sm text-gray-600">— {d.author}, {d.role}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* QUEM SOMOS */}
+      <section id="sobre" className="py-16 bg-white">
+        <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-10 items-center">
+          <div className="rounded-2xl overflow-hidden shadow">
+            {/* sua foto que está em /public */}
+            <img
+              src="/AE4C2D2A-8E9D-438F-A285-37420BCDA4FF.jpeg"
+              alt="André Tomazela"
+              className="block w-full h-full object-cover max-h-[420px]"
+              loading="lazy"
+            />
+          </div>
+          <div>
+            <h2 className="text-2xl md:text-3xl font-bold">Quem é André Tomazela</h2>
+            <p className="mt-4 text-gray-700">
+              Jornalista e estrategista de comunicação com experiência em empresas, agências e projetos editoriais.
+              Entrega clara, sem enrolação, com foco em resultado.
+            </p>
+            <p className="mt-3 text-gray-700">
+              Pós-graduação em Gestão da Comunicação em Mídias Digitais (Senac-SP). Reportagens e especiais para o Valor Econômico.
+              Atuação com organizações de impacto e negócios.
+            </p>
+            <a href="#contato" onClick={(e)=>onNavClick(e,'#contato')} className="inline-block mt-5 px-5 py-3 border rounded-md hover:bg-gray-50">
+              Falar com o André
+            </a>
+          </div>
         </div>
       </section>
 
       {/* INSIGHT FLOW */}
-      <section id="insight" className="bg-neutral-50 py-20 px-4">
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-orange-600 mb-10">
-            Insight Flow
-          </h2>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              "Gaslighting no trabalho: como reconhecer e agir",
-              "Subjetividade sequestrada e saúde mental",
-              "Etarismo nas empresas: o preconceito invisível",
-            ].map((title, i) => (
-              <div
-                key={i}
-                className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition text-left"
-              >
-                <div className="w-full h-36 bg-neutral-100 rounded-md mb-4" />
-                <h3 className="font-semibold text-neutral-800 mb-2">{title}</h3>
-                <p className="text-sm text-orange-500">Ler mais →</p>
-              </div>
+      <section id="insight" className="py-16 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-2xl md:text-3xl font-bold text-[#FF4D00]">Insight Flow</h2>
+          <div className="mt-8 grid md:grid-cols-3 gap-6">
+            {posts.map((p, i) => (
+              <article key={i} className="rounded-xl border bg-white p-5 shadow-sm hover:shadow-md transition">
+                <div className="w-full h-36 rounded-md bg-gradient-to-b from-gray-100 to-white mb-4" />
+                <h3 className="font-semibold text-[#FF4D00] leading-snug">{p.title}</h3>
+                <p className="text-xs text-gray-500 mt-1">{p.date}</p>
+                <a href="#" className="inline-block mt-3 text-sm font-medium text-[#FF4D00] hover:text-orange-800">Ler mais →</a>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
       {/* CONTATO */}
-      <section id="contato" className="max-w-5xl mx-auto px-4 py-20">
-        <h2 className="text-2xl md:text-3xl font-bold mb-6">Vamos conversar?</h2>
-        <p className="text-neutral-600 mb-8">
-          Conte rápido seu objetivo. Eu respondo com um caminho claro e um
-          pacote de soluções sob medida.
-        </p>
-        <form className="grid md:grid-cols-3 gap-4">
-          <input type="text" placeholder="Nome" className="border p-3 rounded-md" />
-          <input type="email" placeholder="E-mail" className="border p-3 rounded-md" />
-          <input type="tel" placeholder="Telefone (opcional)" className="border p-3 rounded-md" />
-          <textarea
-            placeholder="Como posso ajudar?"
-            className="md:col-span-3 border p-3 rounded-md h-32"
-          />
-          <button
-            type="submit"
-            className="bg-orange-500 text-white px-5 py-3 rounded-md hover:bg-orange-600 transition md:col-span-3"
-          >
-            Enviar
-          </button>
-        </form>
+      <section id="contato" className="py-16 bg-gradient-to-t from-orange-50 to-white border-t">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-2xl md:text-3xl font-bold">Vamos conversar?</h2>
+          <p className="mt-2 text-gray-700 max-w-prose">
+            Conte rápido seu objetivo. Eu respondo com um caminho claro e um pacote de soluções sob medida.
+          </p>
+
+          <form className="mt-6 grid md:grid-cols-3 gap-4">
+            <input className="rounded-md border px-4 py-3" placeholder="Nome" required />
+            <input type="email" className="rounded-md border px-4 py-3" placeholder="E-mail" required />
+            <input className="rounded-md border px-4 py-3" placeholder="Telefone (opcional)" />
+            <textarea className="md:col-span-3 rounded-md border px-4 py-3 min-h-[120px]" placeholder="Como posso ajudar?" required />
+            <button className="rounded-md px-5 py-3 bg-[#FF4D00] text-white font-semibold hover:opacity-90 w-fit">Enviar</button>
+          </form>
+
+          <div className="mt-6 text-sm text-gray-600 flex flex-wrap gap-4 items-center">
+            <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a>
+            <span>•</span>
+            <a className="underline" href="#">WhatsApp</a>
+            <span>•</span>
+            <a className="underline" href="#">LinkedIn</a>
+          </div>
+        </div>
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-orange-500 text-white text-center py-10">
+      <footer className="bg-[#FF4D00] py-10 text-center text-white">
         <div className="mx-auto mb-4 w-[220px] md:w-[300px]">
           <img
-            src="/logo-tomazela-br-fundotransp.png?v=6"
+            src="/logo-tomazela-br-fundotransp.png?v=7"
             alt="Logo Tomazela branco"
             className="block w-full h-auto object-contain"
           />
         </div>
-        <p className="text-sm opacity-90">
-          Santa Cecília • São Paulo-SP •{" "}
-          <a href="mailto:andre@andretomazela.com.br" className="underline">
-            andre@andretomazela.com.br
-          </a>{" "}
-          •{" "}
-          <a href="https://wa.me/5511999999999" className="underline">
-            WhatsApp
-          </a>
+        <p className="text-sm">Santa Cecília | São Paulo-SP</p>
+        <p className="text-sm mt-1">
+          <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a> · <a className="underline" href="#">WhatsApp</a>
         </p>
-        <p className="text-xs opacity-80 mt-4">
-          © 2025 Tomazela | Estratégia & Comunicação
-        </p>
+        <p className="text-xs mt-3 opacity-90">© {new Date().getFullYear()} Tomazela | Estratégia & Comunicação</p>
       </footer>
-    </main>
+    </div>
   );
 }
