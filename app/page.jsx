@@ -79,7 +79,7 @@ export default function Home() {
       <header className="sticky top-0 z-40 bg-white/80 backdrop-blur border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <a href="#home" className="flex items-center gap-3 font-bold text-xl tracking-tight" onClick={(e)=>onNavClick(e,'#home')}>
-            <img src="/logo-tomazela.png" alt="Logo Tomazela | Estratégia & Comunicação" className="h-30 w-auto max-h-30" />
+            <img src="/logo-tomazela.png" alt="Logo Tomazela | Estratégia & Comunicação" className="h-22 w-auto max-h-22" />
           </a>
           <nav className="hidden md:flex gap-6 text-sm">
             {nav.map((n) => (
