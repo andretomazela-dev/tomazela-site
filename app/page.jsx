@@ -79,7 +79,13 @@ export default function Home() {
       <header className="sticky top-0 z-40 bg-white/80 backdrop-blur border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <a href="#home" className="flex items-center gap-3 font-bold text-xl tracking-tight" onClick={(e)=>onNavClick(e,'#home')}>
-            <img src="/logo-tomazela.png" alt="Logo Tomazela | Estratégia & Comunicação" className="h-22 w-auto max-h-22" />
+            <div className="overflow-hidden h-12 md:h-16 flex items-center">
+  <img
+    src="/logo-tomazela.png?v=3"
+    alt="Logo Tomazela | Estratégia & Comunicação"
+    className="scale-125 md:scale-150 translate-x-2 w-auto"
+  />
+</div>
           </a>
           <nav className="hidden md:flex gap-6 text-sm">
             {nav.map((n) => (
@@ -221,7 +227,13 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="bg-[#FF4D00] py-8 text-center">
-        <img src="/logo-tomazela-br-fundotransp.png" alt="Logo Tomazela branco" className="mx-auto h-16 mb-4" />
+        <div className="overflow-hidden h-14 md:h-20 flex justify-center items-center mb-4">
+  <img
+    src="/logo-tomazela-br-fundotransp.png?v=3"
+    alt="Logo Tomazela branco"
+    className="scale-125 md:scale-150 translate-x-1 w-auto"
+  />
+</div>
         <p className="text-white text-sm">Santa Cecília | São Paulo-SP</p>
         <p className="text-white text-sm mt-1">
           <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a> · <a className="underline" href="#">WhatsApp</a>
