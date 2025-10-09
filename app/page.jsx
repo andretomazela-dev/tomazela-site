@@ -1,248 +1,254 @@
-'use client';
-import { useState, useEffect } from 'react';
+"use client";
 
-const nav = [
-  { href: '#servicos', label: 'Serviços' },
-  { href: '#conteudos', label: 'Insight Flow' },
-  { href: '#sobre', label: 'Quem somos' },
-  { href: '#contato', label: 'Contato' },
-];
-
-const servicos = [
-  { title: 'Relações com a imprensa', desc: 'Criação de pautas e materiais estratégicos para fortalecer sua marca na mídia.', icon: '📰' },
-  { title: 'Redes sociais', desc: 'Planejamento e execução do conteúdo alinhado ao seu público.', icon: '📱' },
-  { title: 'Parcerias com influenciadores', desc: 'Conexões estratégicas para amplificar sua mensagem.', icon: '🤝' },
-  { title: 'Planejamento de eventos', desc: 'Organização e divulgação de ações que destaquem sua marca.', icon: '🥂' },
-  { title: 'Criação de conteúdo', desc: 'Artigos, textos e materiais que posicionam sua organização no mercado.', icon: '✍️' },
-  { title: 'O que mais você precisa?', desc: 'Montamos um pacote sob medida, de acordo com suas necessidades.', icon: '🧩' },
-];
-
-const depoimentos = [
-  { quote: 'Profissional ágil, estratégico e colaborativo. Nossas entregas ganharam clareza e tração.', author: 'Erika Martins de Figueiredo', role: 'via LinkedIn' },
-  { quote: 'Visão integrada e capacidade de execução acima da média. Recomendo o trabalho.', author: 'Elaine Nishiwaki', role: 'via LinkedIn' },
-];
-
-const posts = [
-  { title: 'Gaslighting no trabalho: como reconhecer e agir', date: '24/09/2025' },
-  { title: 'Subjetividade sequestrada e saúde mental', date: '08/09/2025' },
-  { title: 'Etarismo nas empresas: o preconceito invisível', date: '26/08/2025' },
-];
+import Image from "next/image";
+import { useState } from "react";
 
 export default function Home() {
-  const [open, setOpen] = useState(false);
-  const [status, setStatus] = useState('idle'); // idle | loading | success | error
-  const [active, setActive] = useState('#home');
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const ids = ['#home', '#servicos', '#conteudos', '#sobre', '#contato'];
-    const sections = ids.map((sel) => document.querySelector(sel)).filter(Boolean);
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => { if (entry.isIntersecting) setActive(`#${entry.target.id}`); });
-    }, { root: null, rootMargin: '0px 0px -60% 0px', threshold: [0.2, 0.6] });
-    sections.forEach((sec) => observer.observe(sec));
-    return () => observer.disconnect();
-  }, []);
-
-  const onNavClick = (e, href) => {
+  const onNavClick = (e, id) => {
     e.preventDefault();
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    setOpen(false);
-  };
-
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    setStatus('loading');
-    try {
-      const form = e.currentTarget;
-      const data = new FormData(form);
-      const res = await fetch('https://formspree.io/f/mrgnkylr', { method: 'POST', headers: { Accept: 'application/json' }, body: data });
-      if (res.ok) { setStatus('success'); form.reset(); } else { setStatus('error'); }
-    } catch { setStatus('error'); }
+    const el = document.querySelector(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+      setMenuOpen(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
-      <style>{`
-        @keyframes fadeUp { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-        .reveal-up { animation: fadeUp 0.7s ease-out both; }
-        .reveal-fade { animation: fadeIn 0.9s ease-out 0.1s both; }
-        .img-card { border-radius: 1.5rem; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.1); transition: transform 0.5s ease; }
-        .img-card:hover { transform: scale(1.03); }
-        .post-ph { background: linear-gradient(180deg, #F5F5F5 0%, #FFFFFF 100%); }
-        .title-hover { transition: all 0.2s ease; }
-        .title-hover:hover { text-decoration: underline; filter: brightness(1.08); }
-      `}</style>
-
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <a href="#home" className="flex items-center gap-3 font-bold text-xl tracking-tight" onClick={(e)=>onNavClick(e,'#home')}>
-            <div className="overflow-hidden h-12 md:h-16 flex items-center">
- <a href="#home" className="flex items-center gap-3 font-bold text-xl tracking-tight" onClick={(e)=>onNavClick(e,'#home')}>
-  <div className="w-[180px] md:w-[240px]">
-    <img
-      src="/logo-tomazela.png?v=5"
-      alt="Logo Tomazela | Estratégia & Comunicação"
-      className="block w-full h-auto object-contain"
-    />
-  </div>
-          </a>
-          <nav className="hidden md:flex gap-6 text-sm">
-            {nav.map((n) => (
-              <a key={n.href} href={n.href} onClick={(e)=>onNavClick(e,n.href)} aria-current={active===n.href?'page':undefined} className={active===n.href?'text-[#FF4D00] font-semibold':'text-gray-700 hover:text-[#FF4D00]'}>{n.label}</a>
-            ))}
-          </nav>
-          <div className="md:hidden">
-            <button aria-label="menu" onClick={()=>setOpen(!open)} className="p-2 rounded-lg border">☰</button>
-          </div>
-          <a href="#contato" onClick={(e)=>onNavClick(e,'#contato')} className="hidden md:inline-block rounded-2xl px-4 py-2 bg-[#FF4D00] text-white font-medium shadow hover:shadow-md">Fale com a gente</a>
-        </div>
-        {open && (
-          <div className="md:hidden border-t">
-            <div className="px-4 py-3 flex flex-col gap-3">
-              {nav.map((n)=>(<a key={n.href} href={n.href} onClick={(e)=>onNavClick(e,n.href)} className="py-1">{n.label}</a>))}
+    <main className="min-h-screen bg-white text-neutral-900">
+      {/* HEADER */}
+      <header className="sticky top-0 z-50 bg-white border-b border-neutral-200">
+        <div className="max-w-6xl mx-auto flex justify-between items-center px-4 py-3">
+          <a
+            href="#home"
+            className="flex items-center gap-3 font-bold text-xl tracking-tight"
+            onClick={(e) => onNavClick(e, "#home")}
+          >
+            <div className="w-[200px] md:w-[260px]">
+              <img
+                src="/logo-tomazela.png?v=6"
+                alt="Logo Tomazela | Estratégia & Comunicação"
+                className="block w-full h-auto object-contain"
+              />
             </div>
-          </div>
-        )}
+          </a>
+
+          <nav className="hidden md:flex items-center gap-6 font-medium">
+            <a href="#servicos" onClick={(e) => onNavClick(e, "#servicos")}>
+              Serviços
+            </a>
+            <a href="#insight" onClick={(e) => onNavClick(e, "#insight")}>
+              Insight Flow
+            </a>
+            <a href="#sobre" onClick={(e) => onNavClick(e, "#sobre")}>
+              Quem somos
+            </a>
+            <a href="#contato" onClick={(e) => onNavClick(e, "#contato")}>
+              Contato
+            </a>
+            <a
+              href="#contato"
+              onClick={(e) => onNavClick(e, "#contato")}
+              className="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition"
+            >
+              Fale com a gente
+            </a>
+          </nav>
+        </div>
       </header>
 
-      {/* Hero */}
-      <section id="home" className="anchor bg-gradient-to-b from-orange-50 to-white">
-        <div className="max-w-6xl mx-auto px-4 py-16 md:py-24 grid md:grid-cols-2 gap-10 items-center">
-          <div className="reveal-up">
-            <h1 className="text-3xl md:text-5xl font-extrabold leading-tight">Comunicação sob medida para marcas e organizações de impacto.</h1>
-            <p className="mt-4 text-lg text-gray-700 max-w-prose">Estratégia que posiciona, conteúdo que entrega e relações que abrem portas. Clareza, método e impacto em cada projeto.</p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <a href="#servicos" onClick={(e)=>onNavClick(e,'#servicos')} className="rounded-2xl px-5 py-3 bg-[#FF4D00] text-white font-semibold shadow hover:shadow-lg">Ver serviços</a>
-            </div>
-            <div className="mt-6 flex items-center gap-4 text-sm text-gray-600">
-              <span>São Paulo • Brasil</span>
-              <span>•</span>
-              <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a>
-            </div>
-          </div>
-          <div className="relative img-card overflow-hidden reveal-fade">
-            <div className="aspect-[4/3] w-full bg-[url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1600&auto=format&fit=crop')] bg-cover bg-center"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-[#FF4D00]/30 via-transparent to-white/10 mix-blend-multiply" />
-          </div>
+      {/* HERO */}
+      <section id="home" className="max-w-6xl mx-auto px-4 py-20 grid md:grid-cols-2 gap-10">
+        <div>
+          <h1 className="text-3xl md:text-5xl font-extrabold leading-tight mb-6">
+            Comunicação sob medida para marcas e organizações de impacto.
+          </h1>
+          <p className="text-lg text-neutral-700 mb-6">
+            Estratégia que posiciona, conteúdo que entrega e relações que abrem
+            portas. Clareza, método e impacto em cada projeto.
+          </p>
+          <a
+            href="#servicos"
+            onClick={(e) => onNavClick(e, "#servicos")}
+            className="inline-block bg-orange-500 text-white px-5 py-3 rounded-md hover:bg-orange-600 transition"
+          >
+            Ver serviços
+          </a>
+          <p className="text-sm text-neutral-500 mt-6">
+            São Paulo • Brasil •{" "}
+            <a
+              href="mailto:andre@andretomazela.com.br"
+              className="underline hover:text-orange-500"
+            >
+              andre@andretomazela.com.br
+            </a>
+          </p>
+        </div>
+        <div className="flex justify-center md:justify-end">
+          <img
+            src="/hero-meeting.jpg"
+            alt="Equipe em reunião criativa"
+            className="rounded-lg shadow-lg w-full max-w-md object-cover"
+          />
         </div>
       </section>
 
-      {/* Serviços */}
-      <section id="servicos" className="anchor py-16 bg-gradient-to-b from-white to-orange-50/40">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold">O que podemos fazer por você</h2>
-          <p className="mt-2 text-gray-600 max-w-prose">Serviços pensados para empresas e organizações de impacto. Objetivo: ampliar visibilidade, fortalecer reputação e criar relações consistentes.</p>
-          <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {servicos.map((s,i)=>(
-              <div key={i} className="rounded-2xl border p-5 bg-white shadow-sm hover:shadow-md transition">
-                <div className="img-card post-ph mb-3 flex items-center justify-center text-4xl text-[#FF4D00]">{s.icon}</div>
-                <h4 className="mt-2 font-semibold title-hover">{s.title}</h4>
-                <p className="text-sm text-gray-600 mt-1">{s.desc}</p>
+      {/* SERVIÇOS */}
+      <section id="servicos" className="bg-neutral-50 py-20 px-4">
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">
+            O que podemos fazer por você
+          </h2>
+          <p className="text-neutral-600 mb-10">
+            Serviços pensados para empresas e organizações de impacto. Objetivo:
+            ampliar visibilidade, fortalecer reputação e criar relações
+            consistentes.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-6 text-left">
+            {[
+              {
+                title: "Relações com a imprensa",
+                text: "Criação de pautas e materiais estratégicos para fortalecer sua marca na mídia.",
+              },
+              {
+                title: "Redes sociais",
+                text: "Planejamento e execução de conteúdo alinhado ao seu público.",
+              },
+              {
+                title: "Parcerias com influenciadores",
+                text: "Conexões estratégicas para amplificar sua mensagem.",
+              },
+              {
+                title: "Planejamento de eventos",
+                text: "Organização e divulgação de ações que destaquem sua marca.",
+              },
+              {
+                title: "Criação de conteúdo",
+                text: "Artigos, textos e materiais que posicionam sua organização no mercado.",
+              },
+              {
+                title: "O que mais você precisa?",
+                text: "Montamos um pacote sob medida, de acordo com suas necessidades.",
+              },
+            ].map((item, i) => (
+              <div key={i} className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition">
+                <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
+                <p className="text-neutral-600">{item.text}</p>
               </div>
             ))}
           </div>
-          <div className="mt-8">
-            <a href="#contato" onClick={(e)=>onNavClick(e,'#contato')} className="inline-block rounded-2xl px-5 py-3 bg-[#FF4D00] text-white font-semibold shadow hover:shadow-lg">Montar meu pacote</a>
-          </div>
+
+          <a
+            href="#contato"
+            onClick={(e) => onNavClick(e, "#contato")}
+            className="inline-block mt-10 bg-orange-500 text-white px-6 py-3 rounded-md hover:bg-orange-600 transition"
+          >
+            Montar meu pacote
+          </a>
         </div>
       </section>
 
-      {/* Depoimentos */}
-      <section id="legado" className="py-14 border-t bg-white">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold">O que dizem sobre nosso trabalho</h2>
-        <div className="mt-8 grid md:grid-cols-2 gap-6">
-            {depoimentos.map((d,i)=>(
-              <figure key={i} className="p-6 rounded-2xl border bg-gray-50">
-                <blockquote className="text-gray-800 italic leading-relaxed">“{d.quote}”</blockquote>
-                <figcaption className="mt-4 text-sm text-gray-600">— {d.author}, <span className="opacity-80">{d.role}</span></figcaption>
-              </figure>
+      {/* SOBRE */}
+      <section id="sobre" className="max-w-6xl mx-auto px-4 py-20 grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">
+            Quem é André Tomazela
+          </h2>
+          <p className="text-neutral-700 mb-4">
+            Jornalista e estrategista de comunicação com experiência em
+            empresas, agências e projetos editoriais. Entrega clara, sem
+            enrolação, com foco em resultado.
+          </p>
+          <p className="text-neutral-700 mb-6">
+            Pós-graduado em Gestão da Comunicação em Mídias Digitais (Senac-SP).
+            Reportagens e especiais para o Valor Econômico. Atuação com
+            organizações de impacto e negócios.
+          </p>
+          <a
+            href="#contato"
+            onClick={(e) => onNavClick(e, "#contato")}
+            className="bg-orange-500 text-white px-5 py-3 rounded-md hover:bg-orange-600 transition"
+          >
+            Falar com o André
+          </a>
+        </div>
+      </section>
+
+      {/* INSIGHT FLOW */}
+      <section id="insight" className="bg-neutral-50 py-20 px-4">
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="text-2xl md:text-3xl font-bold text-orange-600 mb-10">
+            Insight Flow
+          </h2>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              "Gaslighting no trabalho: como reconhecer e agir",
+              "Subjetividade sequestrada e saúde mental",
+              "Etarismo nas empresas: o preconceito invisível",
+            ].map((title, i) => (
+              <div
+                key={i}
+                className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition text-left"
+              >
+                <div className="w-full h-36 bg-neutral-100 rounded-md mb-4" />
+                <h3 className="font-semibold text-neutral-800 mb-2">{title}</h3>
+                <p className="text-sm text-orange-500">Ler mais →</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Sobre */}
-      <section id="sobre" className="anchor py-16 bg-white">
-        <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-10 items-center">
-          <div className="relative img-card">
-            <div className="absolute inset-0 bg-[url('/AE4C2D2A-8E9D-438F-A285-37420BCDA4FF.jpeg')] bg-cover bg-center" />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-l from-white/60 to-transparent" />
-          </div>
-          <div>
-            <h2 className="text-2xl md:text-3xl font-bold">Quem é André Tomazela</h2>
-            <p className="mt-4 text-gray-700">Jornalista e estrategista de comunicação com experiência em empresas, agências e projetos editoriais. Entrega clara, sem enrolação, com foco em resultado.</p>
-            <p className="mt-3 text-gray-700">Pós-graduação em Gestão da Comunicação em Mídias Digitais (Senac-SP). Reportagens e especiais para o Valor Econômico. Atuação com organizações de impacto e negócios.</p>
-            <a href="#contato" onClick={(e)=>onNavClick(e,'#contato')} className="inline-block mt-5 rounded-2xl px-5 py-3 border hover:border-gray-400">Falar com o André</a>
-          </div>
-        </div>
-      </section>
-
-      {/* Insight Flow */}
-      <section id="conteudos" className="anchor py-16 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#FF4D00]">Insight Flow</h2>
-          <div className="mt-8 grid md:grid-cols-3 gap-6">
-            {posts.map((p,i)=>(
-              <article key={i} className="rounded-2xl border bg-white p-5 shadow-sm hover:shadow-md transition">
-                <div className="img-card post-ph mb-4"><div className="aspect-[4/3] w-full" /></div>
-                <h3 className="font-semibold leading-snug text-[#FF4D00] title-hover">{p.title}</h3>
-                <p className="text-xs text-gray-500 mt-1">{p.date}</p>
-                <a href="#" className="inline-block mt-3 text-sm font-medium text-[#FF4D00] hover:text-orange-800 title-hover">Ler mais →</a>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Contato */}
-      <section id="contato" className="anchor py-16 bg-gradient-to-t from-orange-50 to-white border-t">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold">Vamos conversar?</h2>
-          <p className="mt-2 text-gray-700 max-w-prose">Conte rápido seu objetivo. Eu respondo com um caminho claro e um pacote de soluções sob medida.</p>
-
-          <div className="mt-4" aria-live="polite">
-            {status==='success' && (<div className="rounded-xl border border-green-200 bg-green-50 text-green-800 px-4 py-3">Obrigado! Sua mensagem foi enviada. Em breve eu retorno.</div>)}
-            {status==='error' && (<div className="rounded-xl border border-red-200 bg-red-50 text-red-800 px-4 py-3">Não foi possível enviar agora. Tente novamente ou escreva para <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a>.</div>)}
-          </div>
-
-          <form onSubmit={onSubmit} className="mt-6 grid md:grid-cols-3 gap-4">
-            <input name="Nome" className="col-span-1 rounded-xl border px-4 py-3" placeholder="Nome" required />
-            <input name="Email" type="email" className="col-span-1 rounded-xl border px-4 py-3" placeholder="E-mail" required />
-            <input name="Telefone" className="col-span-1 rounded-xl border px-4 py-3" placeholder="Telefone (opcional)" />
-            <textarea name="Mensagem" className="md:col-span-3 rounded-xl border px-4 py-3 min-h-[120px]" placeholder="Como posso ajudar?" required />
-            <button type="submit" disabled={status==='loading'} className="rounded-2xl px-5 py-3 bg-[#FF4D00] text-white font-semibold shadow hover:shadow-lg w-fit disabled:opacity-60">{status==='loading'?'Enviando...':'Enviar'}</button>
-          </form>
-
-          <div className="mt-6 text-sm text-gray-600 flex flex-wrap gap-4 items-center">
-            <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a>
-            <span>•</span>
-            <a className="underline" href="#">WhatsApp</a>
-            <span>•</span>
-            <a className="underline" href="#">LinkedIn</a>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-[#FF4D00] py-8 text-center">
-        <div className="overflow-hidden h-14 md:h-20 flex justify-center items-center mb-4">
-  <div className="mx-auto mb-4 w-[200px] md:w-[260px]">
-  <img
-    src="/logo-tomazela-br-fundotransp.png?v=5"
-    alt="Logo Tomazela branco"
-    className="block w-full h-auto object-contain"
-  />
-</div>
-        <p className="text-white text-sm">Santa Cecília | São Paulo-SP</p>
-        <p className="text-white text-sm mt-1">
-          <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a> · <a className="underline" href="#">WhatsApp</a>
+      {/* CONTATO */}
+      <section id="contato" className="max-w-5xl mx-auto px-4 py-20">
+        <h2 className="text-2xl md:text-3xl font-bold mb-6">Vamos conversar?</h2>
+        <p className="text-neutral-600 mb-8">
+          Conte rápido seu objetivo. Eu respondo com um caminho claro e um
+          pacote de soluções sob medida.
         </p>
-        <p className="text-white text-xs mt-3">© {new Date().getFullYear()} Tomazela | Estratégia & Comunicação</p>
+        <form className="grid md:grid-cols-3 gap-4">
+          <input type="text" placeholder="Nome" className="border p-3 rounded-md" />
+          <input type="email" placeholder="E-mail" className="border p-3 rounded-md" />
+          <input type="tel" placeholder="Telefone (opcional)" className="border p-3 rounded-md" />
+          <textarea
+            placeholder="Como posso ajudar?"
+            className="md:col-span-3 border p-3 rounded-md h-32"
+          />
+          <button
+            type="submit"
+            className="bg-orange-500 text-white px-5 py-3 rounded-md hover:bg-orange-600 transition md:col-span-3"
+          >
+            Enviar
+          </button>
+        </form>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="bg-orange-500 text-white text-center py-10">
+        <div className="mx-auto mb-4 w-[220px] md:w-[300px]">
+          <img
+            src="/logo-tomazela-br-fundotransp.png?v=6"
+            alt="Logo Tomazela branco"
+            className="block w-full h-auto object-contain"
+          />
+        </div>
+        <p className="text-sm opacity-90">
+          Santa Cecília • São Paulo-SP •{" "}
+          <a href="mailto:andre@andretomazela.com.br" className="underline">
+            andre@andretomazela.com.br
+          </a>{" "}
+          •{" "}
+          <a href="https://wa.me/5511999999999" className="underline">
+            WhatsApp
+          </a>
+        </p>
+        <p className="text-xs opacity-80 mt-4">
+          © 2025 Tomazela | Estratégia & Comunicação
+        </p>
       </footer>
-    </div>
+    </main>
   );
 }
