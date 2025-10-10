@@ -1,22 +1,87 @@
+"use client";
+
 import { useState, useEffect } from "react";
 
-// Tomazela | Estratégia & Comunicação – Preview (FULL v11.1)
-// Correção final: footer fechado corretamente e sintaxe validada
+/* =========================================================
+   Tomazela | Estratégia & Comunicação — Página única
+   - Logos com proporção correta
+   - Hero com imagem remota
+   - Serviços com ícones SVG embutidos (sem dependências)
+   - Foto do André com object-contain (não corta o rosto)
+   - Formulário com Formspree (sem estado → sem erros de build)
+   ========================================================= */
 
 const nav = [
   { href: "#servicos", label: "Serviços" },
-  { href: "#conteudos", label: "Insight Flow" },
+  { href: "#insight", label: "Insight Flow" },
   { href: "#sobre", label: "Quem somos" },
   { href: "#contato", label: "Contato" },
 ];
 
+// Ícones SVG simples na cor da marca
+const Icon = {
+  Press: (props) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7" {...props}>
+      <rect x="3" y="4" width="18" height="14" rx="2"></rect>
+      <line x1="7" y1="8" x2="17" y2="8"></line>
+      <line x1="7" y1="12" x2="17" y2="12"></line>
+      <line x1="7" y1="16" x2="12" y2="16"></line>
+    </svg>
+  ),
+  Social: (props) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7" {...props}>
+      <circle cx="7" cy="7" r="3"></circle>
+      <circle cx="17" cy="7" r="3"></circle>
+      <circle cx="12" cy="17" r="3"></circle>
+      <line x1="9" y1="9" x2="11" y2="14"></line>
+      <line x1="15" y1="9" x2="13" y2="14"></line>
+    </svg>
+  ),
+  Influencers: (props) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7" {...props}>
+      <circle cx="8" cy="8" r="3"></circle>
+      <circle cx="16" cy="8" r="3"></circle>
+      <path d="M2 20c1.5-3 4-5 6-5s4.5 2 6 5"></path>
+      <path d="M14 14c1.5 0 4.5 2 6 5"></path>
+    </svg>
+  ),
+  Events: (props) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7" {...props}>
+      <rect x="3" y="4" width="18" height="17" rx="2"></rect>
+      <line x1="8" y1="2" x2="8" y2="6"></line>
+      <line x1="16" y1="2" x2="16" y2="6"></line>
+      <line x1="3" y1="10" x2="21" y2="10"></line>
+      <rect x="7" y="13" width="4" height="3" rx="0.5"></rect>
+      <rect x="13" y="13" width="4" height="3" rx="0.5"></rect>
+    </svg>
+  ),
+  Content: (props) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7" {...props}>
+      <path d="M4 4h12l4 4v12a2 2 0 0 1-2 2H4z"></path>
+      <path d="M16 4v4h4"></path>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+      <line x1="8" y1="16" x2="16" y2="16"></line>
+    </svg>
+  ),
+  Custom: (props) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7" {...props}>
+      <path d="M12 2l3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"></path>
+    </svg>
+  ),
+  Instagram: (props) => (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="w-4 h-4" {...props}>
+      <path fill="currentColor" d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.5A5.5 5.5 0 1 1 6.5 13 5.51 5.51 0 0 1 12 7.5zm0 2A3.5 3.5 0 1 0 15.5 13 3.5 3.5 0 0 0 12 9.5zm5.25-2.75a1 1 0 1 1-1 1 1 1 0 0 1 1-1z" />
+    </svg>
+  ),
+};
+
 const servicos = [
-  { title: "Relações com a imprensa", desc: "Criação de pautas e materiais estratégicos para fortalecer sua marca na mídia.", icon: "📰" },
-  { title: "Redes sociais", desc: "Planejamento e execução do conteúdo alinhado ao seu público.", icon: "📱" },
-  { title: "Parcerias com influenciadores", desc: "Conexões estratégicas para amplificar sua mensagem.", icon: "🤝" },
-  { title: "Planejamento de eventos", desc: "Organização e divulgação de ações que destaquem sua marca.", icon: "🥂" },
-  { title: "Criação de conteúdo", desc: "Artigos, textos e materiais que posicionam sua organização no mercado.", icon: "✍️" },
-  { title: "O que mais você precisa?", desc: "Montamos um pacote sob medida, de acordo com suas necessidades.", icon: "🧩" },
+  { icon: <Icon.Press />, title: "Relações com a imprensa", desc: "Criação de pautas e materiais estratégicos para fortalecer sua marca na mídia." },
+  { icon: <Icon.Social />, title: "Redes sociais", desc: "Planejamento e execução de conteúdo alinhado ao seu público." },
+  { icon: <Icon.Influencers />, title: "Parcerias com influenciadores", desc: "Conexões estratégicas para amplificar sua mensagem." },
+  { icon: <Icon.Events />, title: "Planejamento de eventos", desc: "Organização e divulgação de ações que destaquem sua marca." },
+  { icon: <Icon.Content />, title: "Criação de conteúdo", desc: "Artigos, textos e materiais que posicionam sua organização no mercado." },
+  { icon: <Icon.Custom />, title: "O que mais você precisa?", desc: "Montamos um pacote sob medida, de acordo com suas necessidades." },
 ];
 
 const depoimentos = [
@@ -30,25 +95,8 @@ const posts = [
   { title: "Etarismo nas empresas: o preconceito invisível", date: "26/08/2025" },
 ];
 
-export default function SitePreview() {
+export default function Home() {
   const [open, setOpen] = useState(false);
-  const [status, setStatus] = useState("idle");
-  const [active, setActive] = useState("#home");
-
-  useEffect(() => {
-    const ids = ["#home", "#servicos", "#conteudos", "#sobre", "#contato"];
-    const sections = ids.map((sel) => document.querySelector(sel)).filter(Boolean);
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActive(`#${entry.target.id}`);
-        });
-      },
-      { root: null, rootMargin: "0px 0px -60% 0px", threshold: [0.2, 0.6] }
-    );
-    sections.forEach((sec) => observer.observe(sec));
-    return () => observer.disconnect();
-  }, []);
 
   const onNavClick = (e, href) => {
     e.preventDefault();
@@ -57,186 +105,233 @@ export default function SitePreview() {
     setOpen(false);
   };
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    setStatus("loading");
-    try {
-      const form = e.currentTarget;
-      const data = new FormData(form);
-      const res = await fetch("https://formspree.io/f/mrgnkylr", {
-        method: "POST",
-        headers: { Accept: "application/json" },
-        body: data,
-      });
-      if (res.ok) {
-        setStatus("success");
-        form.reset();
-      } else {
-        setStatus("error");
-      }
-    } catch (err) {
-      setStatus("error");
-    }
-  };
+  useEffect(() => {
+    const onResize = () => { if (window.innerWidth >= 768) setOpen(false); };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
-      <style>{`
-        html { scroll-behavior: smooth; }
-        .anchor { scroll-margin-top: 96px; }
-        @keyframes fadeUp { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-        .reveal-up { animation: fadeUp 0.7s ease-out both; }
-        .reveal-fade { animation: fadeIn 0.9s ease-out 0.1s both; }
-        .img-card { border-radius: 1.5rem; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.1); transition: transform 0.5s ease; }
-        .img-card:hover { transform: scale(1.05); }
-        .post-ph { background: linear-gradient(180deg, #F5F5F5 0%, #FFFFFF 100%); }
-        .title-hover { transition: all 0.3s ease; }
-        .title-hover:hover { text-decoration: underline; filter: brightness(1.15); }
-      `}</style>
-
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur border-b border-gray-100">
+      {/* HEADER */}
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <a href="#home" className="flex items-center gap-3 font-bold text-xl tracking-tight" onClick={(e)=>onNavClick(e, '#home')}>
-            <img src="/logo-tomazela.png" alt="Logo Tomazela | Estratégia & Comunicação" className="h-10 w-auto" />
+          <a href="#home" className="flex items-center gap-3" onClick={(e)=>onNavClick(e,'#home')}>
+            {/* LOGO topo — largura controlada + object-contain */}
+            <div className="w-[200px] md:w-[260px]">
+              <img
+                src="/logo-tomazela.png?v=8"
+                alt="Logo Tomazela | Estratégia & Comunicação"
+                className="block w-full h-auto object-contain"
+              />
+            </div>
           </a>
-          <nav className="hidden md:flex gap-6 text-sm">
+
+          <nav className="hidden md:flex items-center gap-6 text-sm">
             {nav.map((n) => (
-              <a key={n.href} href={n.href} onClick={(e) => onNavClick(e, n.href)} aria-current={active === n.href ? "page" : undefined} className={`transition-colors ${active === n.href ? "text-[#FF4D00] font-semibold" : "text-gray-700 hover:text-[#FF4D00]"}`}>
+              <a key={n.href} href={n.href} onClick={(e)=>onNavClick(e, n.href)} className="hover:text-[#FF4D00]">
                 {n.label}
               </a>
             ))}
+            <a
+              href="#contato"
+              onClick={(e)=>onNavClick(e,'#contato')}
+              className="bg-[#FF4D00] text-white px-4 py-2 rounded-md hover:opacity-90 transition"
+            >
+              Fale com a gente
+            </a>
           </nav>
-          <div className="md:hidden">
-            <button aria-label="menu" onClick={() => setOpen(!open)} className="p-2 rounded-lg border">☰</button>
-          </div>
-          <a href="#contato" onClick={(e)=>onNavClick(e,'#contato')} className="hidden md:inline-block rounded-2xl px-4 py-2 bg-[#FF4D00] text-white font-medium shadow hover:shadow-md">Fale com a gente</a>
+
+          <button className="md:hidden p-2 border rounded-md" onClick={()=>setOpen(!open)} aria-label="Abrir menu">
+            ☰
+          </button>
         </div>
+
         {open && (
           <div className="md:hidden border-t">
             <div className="px-4 py-3 flex flex-col gap-3">
               {nav.map((n) => (
-                <a key={n.href} href={n.href} onClick={(e) => onNavClick(e, n.href)} className="py-1">{n.label}</a>
+                <a key={n.href} href={n.href} onClick={(e)=>onNavClick(e, n.href)} className="py-1">
+                  {n.label}
+                </a>
               ))}
+              <a href="#contato" onClick={(e)=>onNavClick(e,'#contato')} className="py-2 bg-[#FF4D00] text-white text-center rounded-md">
+                Fale com a gente
+              </a>
             </div>
           </div>
         )}
       </header>
 
-      {/* Hero */}
-      <section id="home" className="anchor bg-gradient-to-b from-orange-50 to-white">
-        <div className="max-w-6xl mx-auto px-4 py-16 md:py-24 grid md:grid-cols-2 gap-10 items-center">
-          <div className="reveal-up">
-            <h1 className="text-3xl md:text-5xl font-extrabold leading-tight">Comunicação sob medida para marcas e organizações de impacto.</h1>
-            <p className="mt-4 text-lg text-gray-700 max-w-prose">Estratégia que posiciona, conteúdo que entrega e relações que abrem portas. Clareza, método e impacto em cada projeto.</p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <a href="#servicos" onClick={(e)=>onNavClick(e,'#servicos')} className="rounded-2xl px-5 py-3 bg-[#FF4D00] text-white font-semibold shadow hover:shadow-lg">Ver serviços</a>
-            </div>
-            <div className="mt-6 flex items-center gap-4 text-sm text-gray-600">
-              <span>São Paulo • Brasil</span>
-              <span>•</span>
-              <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a>
-            </div>
+      {/* HERO */}
+      <section id="home" className="max-w-6xl mx-auto px-4 py-16 md:py-24 grid md:grid-cols-2 gap-10 items-center">
+        <div>
+          <h1 className="text-3xl md:text-5xl font-extrabold leading-tight">
+            Comunicação sob medida para marcas e organizações de impacto.
+          </h1>
+          <p className="mt-4 text-lg text-gray-700">
+            Estratégia que posiciona, conteúdo que entrega e relações que abrem portas.
+            Clareza, método e impacto em cada projeto.
+          </p>
+          <div className="mt-6 flex gap-3">
+            <a href="#servicos" onClick={(e)=>onNavClick(e,'#servicos')} className="bg-[#FF4D00] text-white px-5 py-3 rounded-md hover:opacity-90">
+              Ver serviços
+            </a>
           </div>
-          <div className="relative img-card overflow-hidden reveal-fade">
-            <div className="aspect-[4/3] w-full bg-[url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1600&auto=format&fit=crop')] bg-cover bg-center"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-[#FF4D00]/30 via-transparent to-white/10 mix-blend-multiply" />
-          </div>
+          <p className="mt-6 text-sm text-gray-600">
+            São Paulo • Brasil •{" "}
+            <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a>
+          </p>
+        </div>
+
+        {/* Imagem remota estável */}
+        <div className="rounded-xl shadow-lg overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=1600&auto=format&fit=crop"
+            alt="Equipe em reunião criativa"
+            className="block w-full h-full object-cover max-h-[320px]"
+            loading="lazy"
+          />
         </div>
       </section>
 
-      {/* Serviços */}
-      <section id="servicos" className="anchor py-16 bg-gradient-to-b from-white to-orange-50/40">
+      {/* SERVIÇOS */}
+      <section id="servicos" className="bg-gray-50 py-16">
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold">O que podemos fazer por você</h2>
-          <p className="mt-2 text-gray-600 max-w-prose">Serviços pensados para empresas e organizações de impacto. Objetivo: ampliar visibilidade, fortalecer reputação e criar relações consistentes.</p>
-          <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <p className="mt-2 text-gray-600 max-w-prose">
+            Serviços pensados para empresas e organizações de impacto. Objetivo: ampliar visibilidade,
+            fortalecer reputação e criar relações consistentes.
+          </p>
+          <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {servicos.map((s, i) => (
-              <div key={i} className="rounded-2xl border p-5 bg-white shadow-sm hover:shadow-md transition">
-                <div className="img-card post-ph mb-3 flex items-center justify-center text-4xl text-[#FF4D00]">{s.icon}</div>
-                <h4 className="mt-2 font-semibold title-hover">{s.title}</h4>
-                <p className="text-sm text-gray-600 mt-1">{s.desc}</p>
+              <div key={i} className="bg-white rounded-xl border p-5 shadow-sm hover:shadow-md transition">
+                <div className="mb-3">{s.icon}</div>
+                <h3 className="font-semibold">{s.title}</h3>
+                <p className="text-sm text-gray-600 mt-2">{s.desc}</p>
               </div>
             ))}
           </div>
-          <div className="mt-8"><a href="#contato" onClick={(e)=>onNavClick(e,'#contato')} className="inline-block rounded-2xl px-5 py-3 bg-[#FF4D00] text-white font-semibold shadow hover:shadow-lg">Montar meu pacote</a></div>
+          <a href="#contato" onClick={(e)=>onNavClick(e,'#contato')} className="inline-block mt-8 bg-[#FF4D00] text-white px-5 py-3 rounded-md hover:opacity-90">
+            Montar meu pacote
+          </a>
         </div>
       </section>
 
-      {/* Depoimentos */}
-      <section id="legado" className="py-14 border-t bg-white">
+      {/* O QUE DIZEM */}
+      <section id="legado" className="py-16">
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold">O que dizem sobre nosso trabalho</h2>
           <div className="mt-8 grid md:grid-cols-2 gap-6">
             {depoimentos.map((d, i) => (
-              <figure key={i} className="p-6 rounded-2xl border bg-gray-50">
-                <blockquote className="text-gray-800 italic leading-relaxed">“{d.quote}”</blockquote>
-                <figcaption className="mt-4 text-sm text-gray-600">— {d.author}, <span className="opacity-80">{d.role}</span></figcaption>
+              <figure key={i} className="p-6 rounded-xl border bg-gray-50">
+                <blockquote className="italic text-gray-800">“{d.quote}”</blockquote>
+                <figcaption className="mt-4 text-sm text-gray-600">— {d.author}, {d.role}</figcaption>
               </figure>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Sobre */}
-      <section id="sobre" className="anchor py-16 bg-white">
+      {/* QUEM SOMOS */}
+      <section id="sobre" className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-10 items-center">
-          <div className="relative img-card">
-            <div className="absolute inset-0 bg-[url('/AE4C2D2A-8E9D-438F-A285-37420BCDA4FF.jpeg')] bg-cover bg-center" />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-l from-white/60 to-transparent" />
+          {/* Sua foto SEM cortar o rosto */}
+          <div className="rounded-2xl overflow-hidden shadow bg-white flex items-center justify-center">
+            <img
+              src="/AE4C2D2A-8E9D-438F-A285-37420BCDA4FF.jpeg"
+              alt="André Tomazela"
+              className="block w-full h-auto object-contain max-h-[480px]"
+              loading="lazy"
+            />
           </div>
+
           <div>
             <h2 className="text-2xl md:text-3xl font-bold">Quem é André Tomazela</h2>
-            <p className="mt-4 text-gray-700">Jornalista e estrategista de comunicação com experiência em empresas, agências e projetos editoriais. Entrega clara, sem enrolação, com foco em resultado.</p>
-            <p className="mt-3 text-gray-700">Pós-graduação em Gestão da Comunicação em Mídias Digitais (Senac-SP). Reportagens e especiais para o Valor Econômico. Atuação com organizações de impacto e negócios.</p>
-            <a href="#contato" onClick={(e)=>onNavClick(e,'#contato')} className="inline-block mt-5 rounded-2xl px-5 py-3 border hover:border-gray-400">Falar com o André</a>
+            <p className="mt-4 text-gray-700">
+              Jornalista e estrategista de comunicação com experiência em empresas, agências e projetos editoriais.
+              Entrega clara, sem enrolação, com foco em resultado.
+            </p>
+            <p className="mt-3 text-gray-700">
+              Pós-graduação em Gestão da Comunicação em Mídias Digitais (Senac-SP). Reportagens e especiais para o Valor Econômico.
+              Atuação com organizações de impacto e negócios.
+            </p>
+            <a href="#contato" onClick={(e)=>onNavClick(e,'#contato')} className="inline-block mt-5 px-5 py-3 border rounded-md hover:bg-gray-50">
+              Falar com o André
+            </a>
           </div>
         </div>
       </section>
 
-      {/* Insight Flow */}
-      <section id="conteudos" className="anchor py-16 bg-gray-50">
+      {/* INSIGHT FLOW */}
+      <section id="insight" className="py-16 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold text-[#FF4D00]">Insight Flow</h2>
           <div className="mt-8 grid md:grid-cols-3 gap-6">
             {posts.map((p, i) => (
-              <article key={i} className="rounded-2xl border bg-white p-5 shadow-sm hover:shadow-md transition">
-                <div className="img-card post-ph mb-4"><div className="aspect-[4/3] w-full" /></div>
-                <h3 className="font-semibold leading-snug text-[#FF4D00] title-hover">{p.title}</h3>
+              <article key={i} className="rounded-xl border bg-white p-5 shadow-sm hover:shadow-md transition">
+                <div className="w-full h-36 rounded-md bg-gradient-to-b from-gray-100 to-white mb-4" />
+                <h3 className="font-semibold text-[#FF4D00] leading-snug">{p.title}</h3>
                 <p className="text-xs text-gray-500 mt-1">{p.date}</p>
-                <a href="#" className="inline-block mt-3 text-sm font-medium text-[#FF4D00] hover:text-orange-800 title-hover">Ler mais →</a>
+                <a href="#" className="inline-block mt-3 text-sm font-medium text-[#FF4D00] hover:text-orange-800">Ler mais →</a>
               </article>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Contato */}
-      <section id="contato" className="anchor py-16 bg-gradient-to-t from-orange-50 to-white border-t">
+      {/* CONTATO (Formspree) */}
+      <section id="contato" className="py-16 bg-gradient-to-t from-orange-50 to-white border-t">
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold">Vamos conversar?</h2>
-          <p className="mt-2 text-gray-700 max-w-prose">Conte rápido seu objetivo. Eu respondo com um caminho claro e um pacote de soluções sob medida.</p>
+          <p className="mt-2 text-gray-700 max-w-prose">
+            Conte rápido seu objetivo. Eu respondo com um caminho claro e um pacote de soluções sob medida.
+          </p>
 
-          <div className="mt-4" aria-live="polite">
-            {status === "success" && (<div className="rounded-xl border border-green-200 bg-green-50 text-green-800 px-4 py-3">Obrigado! Sua mensagem foi enviada. Em breve eu retorno.</div>)}
-            {status === "error" && (<div className="rounded-xl border border-red-200 bg-red-50 text-red-800 px-4 py-3">Não foi possível enviar agora. Tente novamente ou escreva para <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a>.</div>)}
+          <form
+            action="https://formspree.io/f/meorrlvp"
+            method="POST"
+            className="mt-6 grid md:grid-cols-3 gap-4"
+          >
+            <input type="text" name="name" className="rounded-md border px-4 py-3" placeholder="Nome" required />
+            <input type="email" name="email" className="rounded-md border px-4 py-3" placeholder="E-mail" required />
+            <input type="tel" name="phone" className="rounded-md border px-4 py-3" placeholder="Telefone (opcional)" />
+            <textarea name="message" className="md:col-span-3 rounded-md border px-4 py-3 min-h-[120px]" placeholder="Como posso ajudar?" required />
+            <button type="submit" className="rounded-md px-5 py-3 bg-[#FF4D00] text-white font-semibold hover:opacity-90 w-fit">
+              Enviar
+            </button>
+          </form>
+
+          <div className="mt-6 text-sm text-gray-600 flex flex-wrap gap-4 items-center">
+            <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a>
+            <span>•</span>
+            <a className="underline" href="https://wa.me/message/TUNCL3KFQIECM1" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+            <span>•</span>
+            <a className="underline" href="https://www.linkedin.com/in/tomazela/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <span>•</span>
+            <a className="inline-flex items-center gap-2 underline" href="https://www.instagram.com/tomazela.comunica/" target="_blank" rel="noopener noreferrer">
+              <Icon.Instagram className="text-[#FF4D00]" />
+              Instagram
+            </a>
           </div>
+        </div>
+      </section>
 
-          <form onSubmit={onSubmit} className="mt-6 grid md:grid-cols-3 gap-4">
-            <input name="Nome" className="col-span-1 rounded-xl border px-4 py-3" placeholder="Nome" required />
-            <input name="Email" type="email" className="col-span-1 rounded-xl border px-4 py-3" placeholder="E-mail" required />
-            <input name="Telefone" className="col-span-1 rounded-xl border px-4 py-3" placeholder="Telefone (opcional)" />
-            <textarea name="Mensagem" className="md:col-span-3 rounded-xl border px-4 py-3 min-h-[120px]" placeholder="Como posso ajudar?" required />
-            <button type="submit" disabled={status === "loading"} className="rounded-2xl px-5 py-3 bg-[#FF4D00] text-white font-semibold shadow hover:shadow-lg w-fit disabled:opacity-60">{status === "loading" ? "Enviando..." : "
-        <img src="/logo-tomazela-br-fundotransp.png" alt="Logo Tomazela branco" className="block w-full h-auto object-contain" />
+      {/* FOOTER */}
+      <footer className="bg-[#FF4D00] py-10 text-center text-white">
+        <div className="mx-auto mb-4 w-[220px] md:w-[300px]">
+          <img
+            src="/logo-tomazela-br-fundotransp.png?v=8"
+            alt="Logo Tomazela branco"
+            className="block w-full h-auto object-contain"
+          />
         </div>
         <p className="text-sm">Santa Cecília | São Paulo-SP</p>
         <p className="text-sm mt-1">
-          <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a> · {" "}
-          <a className="underline" href="https://wa.me/message/TUNCL3KFQIECM1" target="_blank">WhatsApp</a> · {" "}
-          <a className="underline" href="https://www.linkedin.com/in/tomazela/" target="_blank">LinkedIn</a> · {" "}
-          <a className="inline-flex items-center gap-1 underline" href="https://www.instagram.com/tomazela.comunica/" target="_blank"><span className="sr-only">Instagram</span></a>
+          <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a> ·{" "}
+          <a className="underline" href="https://wa.me/message/TUNCL3KFQIECM1" target="_blank" rel="noopener noreferrer">WhatsApp</a> ·{" "}
+          <a className="underline" href="https://www.linkedin.com/in/tomazela/" target="_blank" rel="noopener noreferrer">LinkedIn</a> ·{" "}
+          <a className="underline" href="https://www.instagram.com/tomazela.comunica/" target="_blank" rel="noopener noreferrer">Instagram</a>
         </p>
         <p className="text-xs mt-3 opacity-90">© {new Date().getFullYear()} Tomazela | Estratégia & Comunicação</p>
       </footer>
