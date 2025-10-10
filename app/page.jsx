@@ -2,23 +2,14 @@
 
 import { useState, useEffect } from "react";
 
-/* =========================================================
-   Tomazela | Estratégia & Comunicação — Página única
-   - Logos com proporção correta
-   - Hero com imagem remota
-   - Serviços com ícones SVG embutidos (sem dependências)
-   - Foto do André com object-contain (não corta o rosto)
-   - Formulário com Formspree (sem estado → sem erros de build)
-   ========================================================= */
-
 const nav = [
   { href: "#servicos", label: "Serviços" },
-  { href: "#insight", label: "Insight Flow" },
+  { href: "/lab", label: "Tomazela Lab", external: true }, // rota externa
   { href: "#sobre", label: "Quem somos" },
   { href: "#contato", label: "Contato" },
 ];
 
-// Ícones SVG simples na cor da marca
+// Ícones SVG (iguais aos que já tínhamos)
 const Icon = {
   Press: (props) => (
     <svg viewBox="0 0 24 24" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7" {...props}>
@@ -68,11 +59,6 @@ const Icon = {
       <path d="M12 2l3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"></path>
     </svg>
   ),
-  Instagram: (props) => (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="w-4 h-4" {...props}>
-      <path fill="currentColor" d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.5A5.5 5.5 0 1 1 6.5 13 5.51 5.51 0 0 1 12 7.5zm0 2A3.5 3.5 0 1 0 15.5 13 3.5 3.5 0 0 0 12 9.5zm5.25-2.75a1 1 0 1 1-1 1 1 1 0 0 1 1-1z" />
-    </svg>
-  ),
 };
 
 const servicos = [
@@ -84,24 +70,14 @@ const servicos = [
   { icon: <Icon.Custom />, title: "O que mais você precisa?", desc: "Montamos um pacote sob medida, de acordo com suas necessidades." },
 ];
 
-const depoimentos = [
-  { quote: "Profissional ágil, estratégico e colaborativo. Nossas entregas ganharam clareza e tração.", author: "Erika Martins de Figueiredo", role: "via LinkedIn" },
-  { quote: "Visão integrada e capacidade de execução acima da média. Recomendo o trabalho.", author: "Elaine Nishiwaki", role: "via LinkedIn" },
-];
-
-const posts = [
-  { title: "Gaslighting no trabalho: como reconhecer e agir", date: "24/09/2025" },
-  { title: "Subjetividade sequestrada e saúde mental", date: "08/09/2025" },
-  { title: "Etarismo nas empresas: o preconceito invisível", date: "26/08/2025" },
-];
-
 export default function Home() {
   const [open, setOpen] = useState(false);
+  const [status, setStatus] = useState("idle"); // idle | loading | success | error
 
-  const onNavClick = (e, href) => {
+  const onNavClick = (e, href, external = false) => {
+    if (external) return; // deixa o link funcionar normalmente (/lab)
     e.preventDefault();
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    document.querySelector(href)?.scrollIntoView({ behavior: "smooth", block: "start" });
     setOpen(false);
   };
 
@@ -111,16 +87,37 @@ export default function Home() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    setStatus("loading");
+    try {
+      const form = e.currentTarget;
+      const data = new FormData(form);
+      const res = await fetch("https://formspree.io/f/meorrlvp", {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: data,
+      });
+      if (res.ok) {
+        setStatus("success");
+        form.reset();
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white text-gray-900">
       {/* HEADER */}
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <a href="#home" className="flex items-center gap-3" onClick={(e)=>onNavClick(e,'#home')}>
-            {/* LOGO topo — largura controlada + object-contain */}
             <div className="w-[200px] md:w-[260px]">
               <img
-                src="/logo-tomazela.png?v=8"
+                src="/logo-tomazela.png?v=9"
                 alt="Logo Tomazela | Estratégia & Comunicação"
                 className="block w-full h-auto object-contain"
               />
@@ -128,8 +125,13 @@ export default function Home() {
           </a>
 
           <nav className="hidden md:flex items-center gap-6 text-sm">
-            {nav.map((n) => (
-              <a key={n.href} href={n.href} onClick={(e)=>onNavClick(e, n.href)} className="hover:text-[#FF4D00]">
+            {nav.map(n => (
+              <a
+                key={n.href}
+                href={n.href}
+                onClick={(e)=>onNavClick(e, n.href, !!n.external)}
+                className="hover:text-[#FF4D00]"
+              >
                 {n.label}
               </a>
             ))}
@@ -142,16 +144,14 @@ export default function Home() {
             </a>
           </nav>
 
-          <button className="md:hidden p-2 border rounded-md" onClick={()=>setOpen(!open)} aria-label="Abrir menu">
-            ☰
-          </button>
+          <button className="md:hidden p-2 border rounded-md" onClick={()=>setOpen(!open)} aria-label="Abrir menu">☰</button>
         </div>
 
         {open && (
           <div className="md:hidden border-t">
             <div className="px-4 py-3 flex flex-col gap-3">
-              {nav.map((n) => (
-                <a key={n.href} href={n.href} onClick={(e)=>onNavClick(e, n.href)} className="py-1">
+              {nav.map(n => (
+                <a key={n.href} href={n.href} onClick={(e)=>onNavClick(e,n.href, !!n.external)} className="py-1">
                   {n.label}
                 </a>
               ))}
@@ -177,6 +177,9 @@ export default function Home() {
             <a href="#servicos" onClick={(e)=>onNavClick(e,'#servicos')} className="bg-[#FF4D00] text-white px-5 py-3 rounded-md hover:opacity-90">
               Ver serviços
             </a>
+            <a href="/lab" className="px-5 py-3 rounded-md border hover:bg-gray-50">
+              Visitar o Tomazela Lab
+            </a>
           </div>
           <p className="mt-6 text-sm text-gray-600">
             São Paulo • Brasil •{" "}
@@ -184,7 +187,6 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Imagem remota estável */}
         <div className="rounded-xl shadow-lg overflow-hidden">
           <img
             src="https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=1600&auto=format&fit=crop"
@@ -218,25 +220,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* O QUE DIZEM */}
-      <section id="legado" className="py-16">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold">O que dizem sobre nosso trabalho</h2>
-          <div className="mt-8 grid md:grid-cols-2 gap-6">
-            {depoimentos.map((d, i) => (
-              <figure key={i} className="p-6 rounded-xl border bg-gray-50">
-                <blockquote className="italic text-gray-800">“{d.quote}”</blockquote>
-                <figcaption className="mt-4 text-sm text-gray-600">— {d.author}, {d.role}</figcaption>
-              </figure>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* QUEM SOMOS */}
       <section id="sobre" className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-10 items-center">
-          {/* Sua foto SEM cortar o rosto */}
           <div className="rounded-2xl overflow-hidden shadow bg-white flex items-center justify-center">
             <img
               src="/AE4C2D2A-8E9D-438F-A285-37420BCDA4FF.jpeg"
@@ -263,24 +249,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* INSIGHT FLOW */}
-      <section id="insight" className="py-16 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#FF4D00]">Insight Flow</h2>
-          <div className="mt-8 grid md:grid-cols-3 gap-6">
-            {posts.map((p, i) => (
-              <article key={i} className="rounded-xl border bg-white p-5 shadow-sm hover:shadow-md transition">
-                <div className="w-full h-36 rounded-md bg-gradient-to-b from-gray-100 to-white mb-4" />
-                <h3 className="font-semibold text-[#FF4D00] leading-snug">{p.title}</h3>
-                <p className="text-xs text-gray-500 mt-1">{p.date}</p>
-                <a href="#" className="inline-block mt-3 text-sm font-medium text-[#FF4D00] hover:text-orange-800">Ler mais →</a>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CONTATO (Formspree) */}
+      {/* CONTATO */}
       <section id="contato" className="py-16 bg-gradient-to-t from-orange-50 to-white border-t">
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold">Vamos conversar?</h2>
@@ -288,31 +257,29 @@ export default function Home() {
             Conte rápido seu objetivo. Eu respondo com um caminho claro e um pacote de soluções sob medida.
           </p>
 
-          <form
-            action="https://formspree.io/f/meorrlvp"
-            method="POST"
-            className="mt-6 grid md:grid-cols-3 gap-4"
-          >
-            <input type="text" name="name" className="rounded-md border px-4 py-3" placeholder="Nome" required />
-            <input type="email" name="email" className="rounded-md border px-4 py-3" placeholder="E-mail" required />
-            <input type="tel" name="phone" className="rounded-md border px-4 py-3" placeholder="Telefone (opcional)" />
-            <textarea name="message" className="md:col-span-3 rounded-md border px-4 py-3 min-h-[120px]" placeholder="Como posso ajudar?" required />
-            <button type="submit" className="rounded-md px-5 py-3 bg-[#FF4D00] text-white font-semibold hover:opacity-90 w-fit">
-              Enviar
+          <div className="mt-4" aria-live="polite">
+            {status === "success" && (<div className="rounded-xl border border-green-200 bg-green-50 text-green-800 px-4 py-3">Obrigado! Sua mensagem foi enviada. Em breve eu retorno.</div>)}
+            {status === "error" && (<div className="rounded-xl border border-red-200 bg-red-50 text-red-800 px-4 py-3">Não foi possível enviar agora. Tente novamente em alguns segundos ou escreva para <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a>.</div>)}
+          </div>
+
+          <form onSubmit={onSubmit} className="mt-6 grid md:grid-cols-3 gap-4">
+            <input name="Nome" className="col-span-1 rounded-xl border px-4 py-3" placeholder="Nome" required />
+            <input name="Email" type="email" className="col-span-1 rounded-xl border px-4 py-3" placeholder="E-mail" required />
+            <input name="Telefone" className="col-span-1 rounded-xl border px-4 py-3" placeholder="Telefone (opcional)" />
+            <textarea name="Mensagem" className="md:col-span-3 rounded-xl border px-4 py-3 min-h-[120px]" placeholder="Como posso ajudar?" required />
+            <button type="submit" disabled={status === "loading"} className="rounded-2xl px-5 py-3 bg-[#FF4D00] text-white font-semibold shadow hover:shadow-lg w-fit disabled:opacity-60">
+              {status === "loading" ? "Enviando..." : "Enviar"}
             </button>
           </form>
 
           <div className="mt-6 text-sm text-gray-600 flex flex-wrap gap-4 items-center">
             <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a>
             <span>•</span>
-            <a className="underline" href="https://wa.me/message/TUNCL3KFQIECM1" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+            <a className="underline" href="https://wa.me/message/TUNCL3KFQIECM1" target="_blank" rel="noreferrer">WhatsApp</a>
             <span>•</span>
-            <a className="underline" href="https://www.linkedin.com/in/tomazela/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <a className="underline" href="https://www.linkedin.com/in/tomazela/" target="_blank" rel="noreferrer">LinkedIn</a>
             <span>•</span>
-            <a className="inline-flex items-center gap-2 underline" href="https://www.instagram.com/tomazela.comunica/" target="_blank" rel="noopener noreferrer">
-              <Icon.Instagram className="text-[#FF4D00]" />
-              Instagram
-            </a>
+            <a className="underline" href="https://www.instagram.com/tomazela.comunica/" target="_blank" rel="noreferrer">Instagram</a>
           </div>
         </div>
       </section>
@@ -321,7 +288,7 @@ export default function Home() {
       <footer className="bg-[#FF4D00] py-10 text-center text-white">
         <div className="mx-auto mb-4 w-[220px] md:w-[300px]">
           <img
-            src="/logo-tomazela-br-fundotransp.png?v=8"
+            src="/logo-tomazela-br-fundotransp.png?v=9"
             alt="Logo Tomazela branco"
             className="block w-full h-auto object-contain"
           />
@@ -329,9 +296,7 @@ export default function Home() {
         <p className="text-sm">Santa Cecília | São Paulo-SP</p>
         <p className="text-sm mt-1">
           <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a> ·{" "}
-          <a className="underline" href="https://wa.me/message/TUNCL3KFQIECM1" target="_blank" rel="noopener noreferrer">WhatsApp</a> ·{" "}
-          <a className="underline" href="https://www.linkedin.com/in/tomazela/" target="_blank" rel="noopener noreferrer">LinkedIn</a> ·{" "}
-          <a className="underline" href="https://www.instagram.com/tomazela.comunica/" target="_blank" rel="noopener noreferrer">Instagram</a>
+          <a className="underline" href="https://wa.me/message/TUNCL3KFQIECM1" target="_blank" rel="noreferrer">WhatsApp</a>
         </p>
         <p className="text-xs mt-3 opacity-90">© {new Date().getFullYear()} Tomazela | Estratégia & Comunicação</p>
       </footer>
