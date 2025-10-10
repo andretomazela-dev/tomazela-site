@@ -8,11 +8,13 @@ import { useState, useEffect } from "react";
    - Hero com imagem remota
    - Serviços com ícones SVG embutidos (sem dependências)
    - Foto do André com object-contain (não corta o rosto)
+   - Tomazela Lab em /lab
+   - Formulário Formspree (mrgnkylr) com feedback
    ========================================================= */
 
 const nav = [
   { href: "#servicos", label: "Serviços" },
-  { href: "#insight", label: "Insight Flow" },
+  { href: "/lab", label: "Tomazela Lab", external: true },   // ← mudou aqui
   { href: "#sobre", label: "Quem somos" },
   { href: "#contato", label: "Contato" },
 ];
@@ -83,16 +85,69 @@ const depoimentos = [
   { quote: "Visão integrada e capacidade de execução acima da média. Recomendo o trabalho.", author: "Elaine Nishiwaki", role: "via LinkedIn" },
 ];
 
-const posts = [
-  { title: "Gaslighting no trabalho: como reconhecer e agir", date: "24/09/2025" },
-  { title: "Subjetividade sequestrada e saúde mental", date: "08/09/2025" },
-  { title: "Etarismo nas empresas: o preconceito invisível", date: "26/08/2025" },
-];
+/* ------------------ Formulário (Formspree) ------------------ */
+function ContactForm() {
+  const [status, setStatus] = useState("idle"); // idle | loading | success | error
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    setStatus("loading");
+    try {
+      const data = new FormData(e.currentTarget);
+      const res = await fetch("https://formspree.io/f/mrgnkylr", {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: data,
+      });
+      if (res.ok) {
+        setStatus("success");
+        e.currentTarget.reset();
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  };
+
+  return (
+    <>
+      <div className="mt-4" aria-live="polite">
+        {status === "success" && (
+          <div className="rounded-md border border-green-200 bg-green-50 text-green-800 px-4 py-3">
+            Obrigado! Sua mensagem foi enviada. Em breve eu retorno.
+          </div>
+        )}
+        {status === "error" && (
+          <div className="rounded-md border border-red-200 bg-red-50 text-red-800 px-4 py-3">
+            Não foi possível enviar agora. Tente novamente em alguns segundos ou escreva para{" "}
+            <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a>.
+          </div>
+        )}
+      </div>
+
+      <form onSubmit={onSubmit} className="mt-6 grid md:grid-cols-3 gap-4">
+        {/* honeypot anti-spam */}
+        <input type="text" name="_gotcha" style={{ display: "none" }} tabIndex={-1} autoComplete="off" />
+
+        <input name="name" className="rounded-md border px-4 py-3" placeholder="Nome" required />
+        <input name="email" type="email" className="rounded-md border px-4 py-3" placeholder="E-mail" required />
+        <input name="phone" className="rounded-md border px-4 py-3" placeholder="Telefone (opcional)" />
+        <textarea name="message" className="md:col-span-3 rounded-md border px-4 py-3 min-h-[120px]" placeholder="Como posso ajudar?" required />
+        <input type="hidden" name="_subject" value="Novo contato pelo site Tomazela" />
+        <button type="submit" disabled={status === "loading"} className="rounded-md px-5 py-3 bg-[#FF4D00] text-white font-semibold hover:opacity-90 w-fit disabled:opacity-60">
+          {status === "loading" ? "Enviando..." : "Enviar"}
+        </button>
+      </form>
+    </>
+  );
+}
 
 export default function Home() {
   const [open, setOpen] = useState(false);
 
-  const onNavClick = (e, href) => {
+  const onNavClick = (e, href, external) => {
+    if (external) return; // /lab é rota externa, não intercepta
     e.preventDefault();
     document.querySelector(href)?.scrollIntoView({ behavior: "smooth", block: "start" });
     setOpen(false);
@@ -113,7 +168,7 @@ export default function Home() {
             {/* LOGO: largura controlada + object-contain */}
             <div className="w-[200px] md:w-[260px]">
               <img
-                src="/logo-tomazela.png?v=8"
+                src="/logo-tomazela.png?v=9"
                 alt="Logo Tomazela | Estratégia & Comunicação"
                 className="block w-full h-auto object-contain"
               />
@@ -122,7 +177,12 @@ export default function Home() {
 
           <nav className="hidden md:flex items-center gap-6 text-sm">
             {nav.map(n => (
-              <a key={n.href} href={n.href} onClick={(e)=>onNavClick(e, n.href)} className="hover:text-[#FF4D00]">
+              <a
+                key={n.href}
+                href={n.href}
+                onClick={(e)=>onNavClick(e, n.href, n.external)}
+                className="hover:text-[#FF4D00]"
+              >
                 {n.label}
               </a>
             ))}
@@ -142,7 +202,7 @@ export default function Home() {
           <div className="md:hidden border-t">
             <div className="px-4 py-3 flex flex-col gap-3">
               {nav.map(n => (
-                <a key={n.href} href={n.href} onClick={(e)=>onNavClick(e,n.href)} className="py-1">
+                <a key={n.href} href={n.href} onClick={(e)=>onNavClick(e,n.href,n.external)} className="py-1">
                   {n.label}
                 </a>
               ))}
@@ -254,20 +314,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* INSIGHT FLOW */}
+      {/* TOMAZELA LAB (linka para /lab) */}
       <section id="insight" className="py-16 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#FF4D00]">Insight Flow</h2>
-          <div className="mt-8 grid md:grid-cols-3 gap-6">
-            {posts.map((p, i) => (
-              <article key={i} className="rounded-xl border bg-white p-5 shadow-sm hover:shadow-md transition">
-                <div className="w-full h-36 rounded-md bg-gradient-to-b from-gray-100 to-white mb-4" />
-                <h3 className="font-semibold text-[#FF4D00] leading-snug">{p.title}</h3>
-                <p className="text-xs text-gray-500 mt-1">{p.date}</p>
-                <a href="#" className="inline-block mt-3 text-sm font-medium text-[#FF4D00] hover:text-orange-800">Ler mais →</a>
-              </article>
-            ))}
-          </div>
+          <h2 className="text-2xl md:text-3xl font-bold text-[#FF4D00]">Tomazela Lab</h2>
+        <p className="text-gray-700 mt-2">Ideias e narrativas sobre comunicação estratégica, impacto e reputação.</p>
+          <a href="/lab" className="inline-block mt-6 text-[#FF4D00] font-medium hover:text-orange-800">Ir para o Tomazela Lab →</a>
         </div>
       </section>
 
@@ -279,13 +331,7 @@ export default function Home() {
             Conte rápido seu objetivo. Eu respondo com um caminho claro e um pacote de soluções sob medida.
           </p>
 
-          <form className="mt-6 grid md:grid-cols-3 gap-4">
-            <input className="rounded-md border px-4 py-3" placeholder="Nome" required />
-            <input type="email" className="rounded-md border px-4 py-3" placeholder="E-mail" required />
-            <input className="rounded-md border px-4 py-3" placeholder="Telefone (opcional)" />
-            <textarea className="md:col-span-3 rounded-md border px-4 py-3 min-h-[120px]" placeholder="Como posso ajudar?" required />
-            <button className="rounded-md px-5 py-3 bg-[#FF4D00] text-white font-semibold hover:opacity-90 w-fit">Enviar</button>
-          </form>
+          <ContactForm />
 
           <div className="mt-6 text-sm text-gray-600 flex flex-wrap gap-4 items-center">
             <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a>
@@ -301,7 +347,7 @@ export default function Home() {
       <footer className="bg-[#FF4D00] py-10 text-center text-white">
         <div className="mx-auto mb-4 w-[220px] md:w-[300px]">
           <img
-            src="/logo-tomazela-br-fundotransp.png?v=8"
+            src="/logo-tomazela-br-fundotransp.png?v=9"
             alt="Logo Tomazela branco"
             className="block w-full h-auto object-contain"
           />
