@@ -76,7 +76,10 @@ export default function Home() {
             >
               Ver serviços
             </a>
-            <a href="/lab" className="border font-semibold px-6 py-3 rounded-xl hover:bg-gray-50">
+            <a
+              href="/lab"
+              className="border font-semibold px-6 py-3 rounded-xl hover:bg-gray-50"
+            >
               Tomazela Lab
             </a>
           </div>
@@ -89,7 +92,7 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Imagem do lado do hero */}
+        {/* Imagem do lado do hero (remota estável) */}
         <div className="rounded-3xl overflow-hidden shadow-lg">
           <img
             src="https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=1600&auto=format&fit=crop"
@@ -101,7 +104,9 @@ export default function Home() {
 
       {/* SERVIÇOS */}
       <section id="servicos" className="py-16 border-t">
-        <h2 className="text-2xl md:text-3xl font-bold mb-3">O que podemos fazer por você</h2>
+        <h2 className="text-2xl md:text-3xl font-bold mb-3">
+          O que podemos fazer por você
+        </h2>
         <p className="text-gray-600 max-w-prose">
           Serviços pensados para empresas e organizações de impacto. Objetivo: ampliar
           visibilidade, fortalecer reputação e criar relações consistentes.
@@ -134,7 +139,10 @@ export default function Home() {
               desc: "Montamos um pacote sob medida, conforme sua necessidade.",
             },
           ].map((item) => (
-            <div key={item.title} className="rounded-2xl border bg-white p-6 shadow-sm hover:shadow-md transition">
+            <div
+              key={item.title}
+              className="rounded-2xl border bg-white p-6 shadow-sm hover:shadow-md transition"
+            >
               <h3 className="font-semibold mb-2">{item.title}</h3>
               <p className="text-sm text-gray-600">{item.desc}</p>
             </div>
@@ -148,14 +156,61 @@ export default function Home() {
         </a>
       </section>
 
+      {/* TOMAZELA LAB — (logo após “Serviços”) */}
+      <section className="py-16 border-t">
+        <div className="flex items-baseline justify-between mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-[#FF4D00]">
+            Tomazela Lab
+          </h2>
+          <a
+            href="/lab"
+            className="text-sm underline text-gray-700 hover:text-orange-700"
+          >
+            Ver todos os artigos →
+          </a>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {postsHome.map((post) => (
+            <article
+              key={post.slug}
+              className="rounded-2xl border bg-white p-5 shadow-sm hover:shadow-md transition"
+            >
+              <a href={`/lab#${post.slug}`} aria-label={post.title}>
+                <div className="rounded-xl overflow-hidden aspect-[4/3] bg-gray-100">
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+                <h3 className="mt-4 font-semibold leading-snug hover:underline">
+                  {post.title}
+                </h3>
+              </a>
+              <p className="text-xs text-gray-500 mt-1">{post.date}</p>
+              <a
+                href={`/lab#${post.slug}`}
+                className="inline-block mt-3 text-sm font-medium text-[#FF4D00] hover:text-orange-800"
+              >
+                Ler mais →
+              </a>
+            </article>
+          ))}
+        </div>
+      </section>
+
       {/* O QUE DIZEM */}
       <section className="py-16 border-t">
-        <h2 className="text-2xl md:text-3xl font-bold mb-8">O que dizem sobre nosso trabalho</h2>
+        <h2 className="text-2xl md:text-3xl font-bold mb-8">
+          O que dizem sobre nosso trabalho
+        </h2>
         <div className="grid md:grid-cols-2 gap-6">
           <blockquote className="bg-white border rounded-2xl p-6 shadow-sm">
             <p className="italic text-gray-700">
-              “Profissional ágil, estratégico e colaborativo. Nossas entregas ganharam
-              clareza e tração.”
+              “Profissional ágil, estratégico e colaborativo. Nossas entregas
+              ganharam clareza e tração.”
             </p>
             <footer className="mt-4 text-sm text-gray-600">
               — Érika Martins de Figueiredo, via LinkedIn
@@ -173,7 +228,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* QUEM SOMOS */}
+      {/* QUEM SOMOS (sua foto sem cortar) */}
       <section id="sobre" className="py-16 border-t">
         <div className="grid md:grid-cols-2 gap-10 items-center">
           <div className="rounded-2xl overflow-hidden shadow bg-white flex items-center justify-center">
@@ -187,44 +242,22 @@ export default function Home() {
           <div>
             <h2 className="text-2xl md:text-3xl font-bold">Quem é André Tomazela</h2>
             <p className="mt-4 text-gray-700">
-              Jornalista e estrategista de comunicação com experiência em empresas, agências
-              e projetos editoriais. Entrega clara, sem enrolação, com foco em resultado.
+              Jornalista e estrategista de comunicação com experiência em empresas,
+              agências e projetos editoriais. Entrega clara, sem enrolação, com foco
+              em resultado.
             </p>
             <p className="mt-3 text-gray-700">
               Pós-graduação em Gestão da Comunicação em Mídias Digitais (Senac-SP).
-              Reportagens e especiais para o Valor Econômico. Atuação com organizações de
-              impacto e negócios.
+              Reportagens e especiais para o Valor Econômico. Atuação com organizações
+              de impacto e negócios.
             </p>
-            <a href="#contato" className="inline-block mt-5 px-5 py-3 border rounded-md hover:bg-gray-50">
+            <a
+              href="#contato"
+              className="inline-block mt-5 px-5 py-3 border rounded-md hover:bg-gray-50"
+            >
               Falar com o André
             </a>
           </div>
-        </div>
-      </section>
-
-      {/* TOMAZELA LAB (na Home) */}
-      <section className="py-16 border-t">
-        <div className="flex items-baseline justify-between mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#FF4D00]">Tomazela Lab</h2>
-          <a href="/lab" className="text-sm underline text-gray-700 hover:text-orange-700">
-            Ver todos os artigos →
-          </a>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {postsHome.map((post) => (
-            <article key={post.slug} className="rounded-2xl border bg-white p-5 shadow-sm hover:shadow-md transition">
-              <a href={`/lab#${post.slug}`} aria-label={post.title}>
-                <div className="rounded-xl overflow-hidden aspect-[4/3] bg-gray-100">
-                  <img src={post.image} alt={post.title} className="w-full h-full object-cover" loading="lazy" />
-                </div>
-                <h3 className="mt-4 font-semibold leading-snug hover:underline">{post.title}</h3>
-              </a>
-              <p className="text-xs text-gray-500 mt-1">{post.date}</p>
-              <a href={`/lab#${post.slug}`} className="inline-block mt-3 text-sm font-medium text-[#FF4D00] hover:text-orange-800">
-                Ler mais →
-              </a>
-            </article>
-          ))}
         </div>
       </section>
 
@@ -232,15 +265,20 @@ export default function Home() {
       <section id="contato" className="py-16 border-t">
         <h2 className="text-2xl md:text-3xl font-bold mb-8">Vamos conversar?</h2>
         <p className="text-gray-700 mb-6 max-w-2xl">
-          Conte rápido seu objetivo. Eu respondo com um caminho claro e um pacote de soluções sob medida.
+          Conte rápido seu objetivo. Eu respondo com um caminho claro e um pacote
+          de soluções sob medida.
         </p>
 
         {status === "error" && (
           <p className="text-red-600 mb-4 bg-red-50 border border-red-200 rounded-md p-3">
             Não foi possível enviar agora. Tente novamente ou escreva para{" "}
-            <a className="underline text-red-700" href="mailto:andre@andretomazela.com.br">
+            <a
+              className="underline text-red-700"
+              href="mailto:andre@andretomazela.com.br"
+            >
               andre@andretomazela.com.br
-            </a>.
+            </a>
+            .
           </p>
         )}
         {status === "success" && (
