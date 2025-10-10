@@ -1,6 +1,8 @@
-// app/lab/page.jsx
+"use client";
 
-// Lista de posts do Tomazela Lab (vitrine + paginação)
+// app/lab/page.jsx
+// Tomazela Lab — listagem com paginação simples ?page=1
+
 const ALL_POSTS = [
   {
     slug: "gaslighting-no-trabalho",
@@ -63,12 +65,17 @@ function formatDate(iso) {
   });
 }
 
-const chooseImage = (p) => p.image || p.fallback;
+const chooseImage = (p) => (p.image ? p.image : p.fallback);
 
-export default function LabPage({ searchParams }) {
-  const page = Math.max(parseInt(searchParams?.page ?? "1", 10) || 1, 1);
-  const totalPages = Math.max(Math.ceil(ALL_POSTS.length / PAGE_SIZE), 1);
-  const start = (page - 1) * PAGE_SIZE;
+export default function LabPage({ searchParams = {} }) {
+  // searchParams chega serializado no client component
+  const pageNumber =
+    Math.max(parseInt(searchParams.page ?? "1", 10) || 1, 1);
+  const totalPages = Math.max(
+    Math.ceil(ALL_POSTS.length / PAGE_SIZE),
+    1
+  );
+  const start = (pageNumber - 1) * PAGE_SIZE;
   const items = ALL_POSTS.slice(start, start + PAGE_SIZE);
 
   return (
@@ -87,7 +94,10 @@ export default function LabPage({ searchParams }) {
             key={p.slug}
             className="rounded-2xl border bg-white p-5 shadow-sm hover:shadow-md transition"
           >
-            <a href={`/lab/${p.slug}`} className="block rounded-lg overflow-hidden">
+            <a
+              href={`/lab/${p.slug}`}
+              className="block rounded-lg overflow-hidden"
+            >
               <div className="aspect-[16/9] w-full bg-gray-100">
                 <img
                   src={chooseImage(p)}
@@ -102,7 +112,9 @@ export default function LabPage({ searchParams }) {
                 {p.title}
               </a>
             </h2>
-            <p className="text-xs text-gray-500 mt-1">{formatDate(p.date)}</p>
+            <p className="text-xs text-gray-500 mt-1">
+              {formatDate(p.date)}
+            </p>
             <a
               href={`/lab/${p.slug}`}
               className="inline-block mt-2 text-sm font-medium text-[#FF4D00] hover:text-orange-800"
@@ -116,22 +128,26 @@ export default function LabPage({ searchParams }) {
       {/* Paginação */}
       <div className="mt-10 flex items-center justify-center gap-2">
         <a
-          href={`/lab?page=${Math.max(page - 1, 1)}`}
-          aria-disabled={page <= 1}
+          href={`/lab?page=${Math.max(pageNumber - 1, 1)}`}
+          aria-disabled={pageNumber <= 1}
           className={`px-3 py-2 rounded-md border ${
-            page <= 1 ? "pointer-events-none opacity-50" : "hover:bg-gray-50"
+            pageNumber <= 1
+              ? "pointer-events-none opacity-50"
+              : "hover:bg-gray-50"
           }`}
         >
           ← Anterior
         </a>
         <span className="text-sm text-gray-600 px-2">
-          Página {page} de {totalPages}
+          Página {pageNumber} de {totalPages}
         </span>
         <a
-          href={`/lab?page=${Math.min(page + 1, totalPages)}`}
-          aria-disabled={page >= totalPages}
+          href={`/lab?page=${Math.min(pageNumber + 1, totalPages)}`}
+          aria-disabled={pageNumber >= totalPages}
           className={`px-3 py-2 rounded-md border ${
-            page >= totalPages ? "pointer-events-none opacity-50" : "hover:bg-gray-50"
+            pageNumber >= totalPages
+              ? "pointer-events-none opacity-50"
+              : "hover:bg-gray-50"
           }`}
         >
           Próxima →
@@ -140,4 +156,3 @@ export default function LabPage({ searchParams }) {
     </main>
   );
 }
-
