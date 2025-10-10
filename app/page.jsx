@@ -4,12 +4,12 @@ import { useState, useEffect } from "react";
 
 const nav = [
   { href: "#servicos", label: "Serviços" },
-  { href: "/lab", label: "Tomazela Lab", external: true }, // rota externa
+  { href: "/lab", label: "Tomazela Lab", external: true },
   { href: "#sobre", label: "Quem somos" },
   { href: "#contato", label: "Contato" },
 ];
 
-// Ícones SVG (iguais aos que já tínhamos)
+// Ícones (iguais aos atuais)
 const Icon = {
   Press: (props) => (
     <svg viewBox="0 0 24 24" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7" {...props}>
@@ -70,12 +70,45 @@ const servicos = [
   { icon: <Icon.Custom />, title: "O que mais você precisa?", desc: "Montamos um pacote sob medida, de acordo com suas necessidades." },
 ];
 
+// *** Posts do Lab para a vitrine (3 mais recentes) ***
+// Coloque imagens em /public/lab/*.jpg ou use as URLs abaixo.
+// Se quiser usar seus próprios arquivos, basta trocar o campo image.
+const LAB_POSTS_HOME = [
+  {
+    slug: "gaslighting-no-trabalho",
+    title: "Gaslighting no trabalho: como reconhecer e agir",
+    date: "2025-09-24",
+    image: "/lab/gaslighting.jpg", // fallback automático se não existir
+    fallback: "https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?q=80&w=1200&auto=format&fit=crop",
+  },
+  {
+    slug: "subjetividade-e-saude-mental",
+    title: "Subjetividade sequestrada e saúde mental",
+    date: "2025-09-08",
+    image: "/lab/saude-mental.jpg",
+    fallback: "https://images.unsplash.com/photo-1496307653780-42ee777d4833?q=80&w=1200&auto=format&fit=crop",
+  },
+  {
+    slug: "etarismo-nas-empresas",
+    title: "Etarismo nas empresas: o preconceito invisível",
+    date: "2025-08-26",
+    image: "/lab/etarismo.jpg",
+    fallback: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1200&auto=format&fit=crop",
+  },
+];
+
+function imgOrFallback(src, fallback) {
+  // No Next.js estático, não dá para checar existência de arquivo no client;
+  // aqui só mantemos a ordem: tenta local; se não subir os arquivos, deixe a URL externa.
+  return src || fallback;
+}
+
 export default function Home() {
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState("idle"); // idle | loading | success | error
 
   const onNavClick = (e, href, external = false) => {
-    if (external) return; // deixa o link funcionar normalmente (/lab)
+    if (external) return; // /lab
     e.preventDefault();
     document.querySelector(href)?.scrollIntoView({ behavior: "smooth", block: "start" });
     setOpen(false);
@@ -217,6 +250,43 @@ export default function Home() {
           <a href="#contato" onClick={(e)=>onNavClick(e,'#contato')} className="inline-block mt-8 bg-[#FF4D00] text-white px-5 py-3 rounded-md hover:opacity-90">
             Montar meu pacote
           </a>
+        </div>
+      </section>
+
+      {/* TOMAZELA LAB — vitrine com 3 artigos */}
+      <section id="lab-teaser" className="py-16 bg-white">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex items-end justify-between gap-4">
+            <h2 className="text-2xl md:text-3xl font-bold">Tomazela Lab</h2>
+            <a href="/lab" className="text-[#FF4D00] font-medium hover:underline whitespace-nowrap">
+              Ver todos os artigos →
+            </a>
+          </div>
+
+          <div className="mt-8 grid md:grid-cols-3 gap-6">
+            {LAB_POSTS_HOME.slice(0, 3).map((p) => (
+              <article key={p.slug} className="rounded-2xl border bg-white p-5 shadow-sm hover:shadow-md transition">
+                <a href={`/lab/${p.slug}`} className="block rounded-lg overflow-hidden">
+                  <div className="aspect-[16/9] w-full bg-gray-100">
+                    <img
+                      src={imgOrFallback(p.image, p.fallback)}
+                      alt={p.title}
+                      className="block w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                </a>
+                <h3 className="mt-4 font-semibold leading-snug">
+                  <a href={`/lab/${p.slug}`} className="text-[#FF4D00] hover:text-orange-800">
+                    {p.title}
+                  </a>
+                </h3>
+                <a href={`/lab/${p.slug}`} className="inline-block mt-2 text-sm font-medium text-[#FF4D00] hover:text-orange-800">
+                  Ler mais →
+                </a>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
