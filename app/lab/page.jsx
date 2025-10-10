@@ -1,159 +1,131 @@
 "use client";
 
-// app/lab/page.jsx
-// Tomazela Lab — listagem com paginação simples ?page=1
+import { useMemo } from "react";
 
+// Mock: posts do Tomazela Lab (troque por sua origem real depois)
 const ALL_POSTS = [
   {
     slug: "gaslighting-no-trabalho",
     title: "Gaslighting no trabalho: como reconhecer e agir",
-    date: "2025-09-24",
-    image: "/lab/gaslighting.jpg",
-    fallback:
-      "https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?q=80&w=1200&auto=format&fit=crop",
+    date: "24/09/2025",
+    image:
+      "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=1600&auto=format&fit=crop",
+    excerpt:
+      "Entenda sinais de gaslighting no ambiente corporativo e como agir com segurança.",
   },
   {
-    slug: "subjetividade-e-saude-mental",
+    slug: "subjetividade-sequestrada",
     title: "Subjetividade sequestrada e saúde mental",
-    date: "2025-09-08",
-    image: "/lab/saude-mental.jpg",
-    fallback:
-      "https://images.unsplash.com/photo-1496307653780-42ee777d4833?q=80&w=1200&auto=format&fit=crop",
+    date: "08/09/2025",
+    image:
+      "https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=1600&auto=format&fit=crop",
+    excerpt:
+      "Reflexões sobre trabalho, autonomia e estratégias para preservar o bem-estar.",
   },
   {
     slug: "etarismo-nas-empresas",
     title: "Etarismo nas empresas: o preconceito invisível",
-    date: "2025-08-26",
-    image: "/lab/etarismo.jpg",
-    fallback:
-      "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1200&auto=format&fit=crop",
+    date: "26/08/2025",
+    image:
+      "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1600&auto=format&fit=crop",
+    excerpt:
+      "Como combater o etarismo e construir equipes mais diversas e eficazes.",
   },
   {
     slug: "comunicacao-inclusiva",
-    title: "Comunicação inclusiva: compromisso que vai além",
-    date: "2025-08-10",
-    image: "/lab/inclusiva.jpg",
-    fallback:
-      "https://images.unsplash.com/photo-1492724441997-5dc865305da7?q=80&w=1200&auto=format&fit=crop",
-  },
-  {
-    slug: "estrategias-para-startups",
-    title: "5 estratégias de comunicação para startups",
-    date: "2025-07-25",
-    image: "/lab/startups.jpg",
-    fallback:
-      "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1200&auto=format&fit=crop",
-  },
-  {
-    slug: "tendencias-2025",
-    title: "Tendências de comunicação 2025",
-    date: "2025-07-10",
-    image: "/lab/tendencias.jpg",
-    fallback:
-      "https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=1200&auto=format&fit=crop",
+    title: "Comunicação Inclusiva: compromisso que vai além das palavras",
+    date: "19/08/2025",
+    image:
+      "https://images.unsplash.com/photo-1520975979651-7f4c1cfed5af?q=80&w=1600&auto=format&fit=crop",
+    excerpt:
+      "Práticas e critérios para uma comunicação que respeita e representa as pessoas.",
   },
 ];
 
-const PAGE_SIZE = 6;
-
-function formatDate(iso) {
-  const d = new Date(iso);
-  return d.toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
-}
-
-const chooseImage = (p) => (p.image ? p.image : p.fallback);
-
-export default function LabPage({ searchParams = {} }) {
-  // searchParams chega serializado no client component
-  const pageNumber =
-    Math.max(parseInt(searchParams.page ?? "1", 10) || 1, 1);
-  const totalPages = Math.max(
-    Math.ceil(ALL_POSTS.length / PAGE_SIZE),
-    1
-  );
-  const start = (pageNumber - 1) * PAGE_SIZE;
-  const items = ALL_POSTS.slice(start, start + PAGE_SIZE);
+export default function LabPage({ searchParams }) {
+  // Paginação básica via query ?page=1
+  const page = Number(searchParams?.page ?? 1) || 1;
+  const pageSize = 9;
+  const start = (page - 1) * pageSize;
+  const current = useMemo(() => ALL_POSTS.slice(start, start + pageSize), [start]);
+  const totalPages = Math.ceil(ALL_POSTS.length / pageSize);
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-12">
-      <h1 className="text-3xl md:text-4xl font-extrabold text-[#FF4D00]">
-        Tomazela Lab
-      </h1>
-      <p className="mt-2 text-gray-700 max-w-prose">
-        Ideias, provocações e reflexões sobre comunicação, mercado e cultura
-        contemporânea.
+      {/* Título do Lab */}
+      <div className="flex items-baseline justify-between gap-4">
+        <h1 className="text-3xl md:text-4xl font-extrabold text-[#FF4D00]">
+          Tomazela Lab
+        </h1>
+        <a
+          href="/"
+          className="text-sm underline hover:text-orange-700"
+          aria-label="Voltar para a Home"
+        >
+          Voltar para a Home
+        </a>
+      </div>
+      <p className="mt-2 text-gray-700 max-w-2xl">
+        Artigos curtos, ideias em teste e aprendizados práticos sobre comunicação
+        estratégica, conteúdo e reputação.
       </p>
 
-      <div className="mt-8 grid md:grid-cols-3 gap-6">
-        {items.map((p) => (
+      {/* Grid de posts */}
+      <section className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {current.map((post) => (
           <article
-            key={p.slug}
+            key={post.slug}
             className="rounded-2xl border bg-white p-5 shadow-sm hover:shadow-md transition"
           >
-            <a
-              href={`/lab/${p.slug}`}
-              className="block rounded-lg overflow-hidden"
-            >
-              <div className="aspect-[16/9] w-full bg-gray-100">
+            <a href={`/lab/${post.slug}`} aria-label={post.title}>
+              <div className="rounded-xl overflow-hidden aspect-[4/3] bg-gray-100">
                 <img
-                  src={chooseImage(p)}
-                  alt={p.title}
-                  className="block w-full h-full object-cover"
+                  src={post.image}
+                  alt={post.title}
+                  className="w-full h-full object-cover"
                   loading="lazy"
                 />
               </div>
+              <h2 className="mt-4 font-semibold leading-snug text-gray-900 hover:underline">
+                {post.title}
+              </h2>
             </a>
-            <h2 className="mt-4 font-semibold text-[#FF4D00] leading-snug">
-              <a href={`/lab/${p.slug}`} className="hover:text-orange-800">
-                {p.title}
-              </a>
-            </h2>
-            <p className="text-xs text-gray-500 mt-1">
-              {formatDate(p.date)}
-            </p>
+            <p className="text-xs text-gray-500 mt-1">{post.date}</p>
+            <p className="text-sm text-gray-600 mt-2 line-clamp-3">{post.excerpt}</p>
             <a
-              href={`/lab/${p.slug}`}
-              className="inline-block mt-2 text-sm font-medium text-[#FF4D00] hover:text-orange-800"
+              href={`/lab/${post.slug}`}
+              className="inline-block mt-3 text-sm font-medium text-[#FF4D00] hover:text-orange-800"
             >
               Ler mais →
             </a>
           </article>
         ))}
-      </div>
+      </section>
 
       {/* Paginação */}
-      <div className="mt-10 flex items-center justify-center gap-2">
-        <a
-          href={`/lab?page=${Math.max(pageNumber - 1, 1)}`}
-          aria-disabled={pageNumber <= 1}
-          className={`px-3 py-2 rounded-md border ${
-            pageNumber <= 1
-              ? "pointer-events-none opacity-50"
-              : "hover:bg-gray-50"
-          }`}
-        >
-          ← Anterior
-        </a>
-        <span className="text-sm text-gray-600 px-2">
-          Página {pageNumber} de {totalPages}
-        </span>
-        <a
-          href={`/lab?page=${Math.min(pageNumber + 1, totalPages)}`}
-          aria-disabled={pageNumber >= totalPages}
-          className={`px-3 py-2 rounded-md border ${
-            pageNumber >= totalPages
-              ? "pointer-events-none opacity-50"
-              : "hover:bg-gray-50"
-          }`}
-        >
-          Próxima →
-        </a>
-      </div>
+      {totalPages > 1 && (
+        <nav className="mt-10 flex items-center justify-center gap-3" aria-label="Paginação">
+          <a
+            href={`/lab?page=${Math.max(1, page - 1)}`}
+            className={`px-3 py-2 rounded-md border ${
+              page === 1 ? "pointer-events-none opacity-50" : "hover:bg-gray-50"
+            }`}
+          >
+            Anterior
+          </a>
+          <span className="text-sm text-gray-600">
+            Página {page} de {totalPages}
+          </span>
+          <a
+            href={`/lab?page=${Math.min(totalPages, page + 1)}`}
+            className={`px-3 py-2 rounded-md border ${
+              page === totalPages ? "pointer-events-none opacity-50" : "hover:bg-gray-50"
+            }`}
+          >
+            Próxima
+          </a>
+        </nav>
+      )}
     </main>
   );
 }
-
