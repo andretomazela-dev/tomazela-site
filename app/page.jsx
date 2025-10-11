@@ -1,49 +1,130 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
+/* =========================================================
+   Tomazela | Estratégia & Comunicação — Home (App Router)
+   - Navbar: Serviços • Tomazela Lab (/lab) • Quem somos • Contato
+   - Logos: /public/logo-tomazela.png e /public/logo-tomazela-br-fundotransp.png (object-contain, bust ?v=9)
+   - Hero com imagem ilustrativa
+   - Serviços com ícones SVG monocromáticos (linguagem moderna)
+   - Tomazela Lab: 3 artigos em cards (logo após Serviços)
+   - Quem somos: foto do André sem cortar rosto
+   - Contato: Formspree (meorrlvp) com feedback
+   - Footer: logo branco + contatos
+   ========================================================= */
+
+// Ícones SVG monocromáticos (laranja da marca)
+const Icon = {
+  Press: (props) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7" {...props}>
+      <rect x="3" y="4" width="18" height="14" rx="2"></rect>
+      <line x1="7" y1="8" x2="17" y2="8"></line>
+      <line x1="7" y1="12" x2="17" y2="12"></line>
+      <line x1="7" y1="16" x2="12" y2="16"></line>
+    </svg>
+  ),
+  Social: (props) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7" {...props}>
+      <circle cx="7" cy="7" r="3"></circle>
+      <circle cx="17" cy="7" r="3"></circle>
+      <circle cx="12" cy="17" r="3"></circle>
+      <line x1="9" y1="9" x2="11" y2="14"></line>
+      <line x1="15" y1="9" x2="13" y2="14"></line>
+    </svg>
+  ),
+  Influencers: (props) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7" {...props}>
+      <circle cx="8" cy="8" r="3"></circle>
+      <circle cx="16" cy="8" r="3"></circle>
+      <path d="M2 20c1.5-3 4-5 6-5s4.5 2 6 5"></path>
+      <path d="M14 14c1.5 0 4.5 2 6 5"></path>
+    </svg>
+  ),
+  Events: (props) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7" {...props}>
+      <rect x="3" y="4" width="18" height="17" rx="2"></rect>
+      <line x1="8" y1="2" x2="8" y2="6"></line>
+      <line x1="16" y1="2" x2="16" y2="6"></line>
+      <line x1="3" y1="10" x2="21" y2="10"></line>
+      <rect x="7" y="13" width="4" height="3" rx="0.5"></rect>
+      <rect x="13" y="13" width="4" height="3" rx="0.5"></rect>
+    </svg>
+  ),
+  Content: (props) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7" {...props}>
+      <path d="M4 4h12l4 4v12a2 2 0 0 1-2 2H4z"></path>
+      <path d="M16 4v4h4"></path>
+      <line x1="8" y1="12" x2="16" y2="12"></line>
+      <line x1="8" y1="16" x2="16" y2="16"></line>
+    </svg>
+  ),
+  Custom: (props) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7" {...props}>
+      <path d="M12 2l3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"></path>
+    </svg>
+  ),
+};
+
+const services = [
+  { icon: <Icon.Press />,       title: "Relações com a imprensa",      desc: "Criação de pautas e materiais estratégicos para fortalecer sua marca na mídia." },
+  { icon: <Icon.Social />,      title: "Redes sociais",                 desc: "Planejamento e execução de conteúdo alinhado ao seu público." },
+  { icon: <Icon.Influencers />, title: "Parcerias com influenciadores", desc: "Conexões estratégicas para amplificar sua mensagem." },
+  { icon: <Icon.Events />,      title: "Planejamento de eventos",       desc: "Organização e divulgação de ações que destaquem sua marca." },
+  { icon: <Icon.Content />,     title: "Criação de conteúdo",           desc: "Textos e materiais que posicionam sua marca no mercado." },
+  { icon: <Icon.Custom />,      title: "O que mais você precisa?",      desc: "Montamos um pacote sob medida, conforme sua necessidade." },
+];
+
+// 3 posts para a home (cards com link para /lab)
 const postsHome = [
   {
-    slug: "gaslighting-no-trabalho",
     title: "Gaslighting no trabalho: como reconhecer e agir",
     date: "24/09/2025",
-    image:
-      "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=1600&auto=format&fit=crop",
+    href: "/lab",
+    img: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?q=80&w=1200&auto=format&fit=crop",
   },
   {
-    slug: "subjetividade-sequestrada",
     title: "Subjetividade sequestrada e saúde mental",
     date: "08/09/2025",
-    image:
-      "https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=1600&auto=format&fit=crop",
+    href: "/lab",
+    img: "https://images.unsplash.com/photo-1485217988980-11786ced9454?q=80&w=1200&auto=format&fit=crop",
   },
   {
-    slug: "etarismo-nas-empresas",
     title: "Etarismo nas empresas: o preconceito invisível",
     date: "26/08/2025",
-    image:
-      "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1600&auto=format&fit=crop",
+    href: "/lab",
+    img: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=1200&auto=format&fit=crop",
   },
 ];
 
-export default function Home() {
-  const [status, setStatus] = useState("idle");
+export default function HomePage() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [status, setStatus] = useState("idle"); // idle | loading | success | error
 
-  async function handleSubmit(e) {
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth >= 768) setMenuOpen(false);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  const onScrollTo = (e, id) => {
+    e.preventDefault();
+    document.querySelector(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setMenuOpen(false);
+  };
+
+  const submitForm = async (e) => {
     e.preventDefault();
     setStatus("loading");
-    const form = e.currentTarget;
-    const payload = {
-      Nome: form.Nome.value,
-      Email: form.Email.value,
-      Telefone: form.Telefone.value,
-      Mensagem: form.Mensagem.value,
-    };
     try {
+      const form = e.currentTarget;
+      const data = new FormData(form);
       const res = await fetch("https://formspree.io/f/meorrlvp", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        headers: { Accept: "application/json" },
+        body: data,
       });
       if (res.ok) {
         setStatus("success");
@@ -51,186 +132,164 @@ export default function Home() {
       } else {
         setStatus("error");
       }
-    } catch {
+    } catch (err) {
       setStatus("error");
     }
-  }
+  };
 
   return (
-    <div className="max-w-6xl mx-auto px-4">
+    <div className="min-h-screen bg-white text-gray-900">
+      {/* HEADER */}
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-200">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+          <a href="#home" onClick={(e) => onScrollTo(e, "#home")} className="flex items-center gap-3">
+            <div className="w-[200px] md:w-[260px]">
+              <img
+                src="/logo-tomazela.png?v=9"
+                alt="Tomazela | Estratégia & Comunicação"
+                className="block w-full h-auto object-contain"
+              />
+            </div>
+          </a>
+
+          <nav className="hidden md:flex items-center gap-6 text-sm">
+            <a href="#servicos" onClick={(e) => onScrollTo(e, "#servicos")} className="hover:text-[#FF4D00]">Serviços</a>
+            <a href="/lab" className="hover:text-[#FF4D00]" aria-label="Tomazela Lab">Tomazela Lab</a>
+            <a href="#sobre" onClick={(e) => onScrollTo(e, "#sobre")} className="hover:text-[#FF4D00]">Quem somos</a>
+            <a
+              href="#contato"
+              onClick={(e) => onScrollTo(e, "#contato")}
+              className="bg-[#FF4D00] text-white px-4 py-2 rounded-md hover:opacity-90 transition"
+            >
+              Fale com a gente
+            </a>
+          </nav>
+
+          <button className="md:hidden p-2 border rounded-md" onClick={() => setMenuOpen((v) => !v)} aria-label="Abrir menu">
+            ☰
+          </button>
+        </div>
+
+        {menuOpen && (
+          <div className="md:hidden border-t">
+            <div className="px-4 py-3 flex flex-col gap-3">
+              <a href="#servicos" onClick={(e) => onScrollTo(e, "#servicos")} className="py-1">Serviços</a>
+              <a href="/lab" className="py-1">Tomazela Lab</a>
+              <a href="#sobre" onClick={(e) => onScrollTo(e, "#sobre")} className="py-1">Quem somos</a>
+              <a href="#contato" onClick={(e) => onScrollTo(e, "#contato")} className="py-2 bg-[#FF4D00] text-white text-center rounded-md">
+                Fale com a gente
+              </a>
+            </div>
+          </div>
+        )}
+      </header>
+
       {/* HERO */}
-      <section className="grid md:grid-cols-2 gap-10 items-center min-h-[60vh] py-16 md:py-24">
+      <section id="home" className="max-w-6xl mx-auto px-4 py-16 md:py-24 grid md:grid-cols-2 gap-10 items-center">
         <div>
-          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
+          <h1 className="text-3xl md:text-5xl font-extrabold leading-tight">
             Comunicação sob medida para marcas e organizações de impacto.
           </h1>
           <p className="mt-4 text-lg text-gray-700">
             Estratégia que posiciona, conteúdo que entrega e relações que abrem portas.
             Clareza, método e impacto em cada projeto.
           </p>
-
-          <div className="mt-8 flex gap-4">
-            <a
-              href="#servicos"
-              className="bg-[#FF4D00] text-white font-semibold px-6 py-3 rounded-xl shadow hover:shadow-lg"
-            >
+          <div className="mt-6 flex gap-3">
+            <a href="#servicos" onClick={(e) => onScrollTo(e, "#servicos")} className="bg-[#FF4D00] text-white px-5 py-3 rounded-md hover:opacity-90">
               Ver serviços
             </a>
-            <a
-              href="/lab"
-              className="border font-semibold px-6 py-3 rounded-xl hover:bg-gray-50"
-            >
-              Tomazela Lab
+            <a href="/lab" className="px-5 py-3 rounded-md border hover:border-gray-400">
+              Visitar o Tomazela Lab
             </a>
           </div>
-
           <p className="mt-6 text-sm text-gray-600">
             São Paulo • Brasil •{" "}
-            <a className="underline" href="mailto:andre@andretomazela.com.br">
-              andre@andretomazela.com.br
-            </a>
+            <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a>
           </p>
         </div>
 
-        {/* Imagem do lado do hero (remota estável) */}
-        <div className="rounded-3xl overflow-hidden shadow-lg">
+        <div className="rounded-xl shadow-lg overflow-hidden">
           <img
             src="https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=1600&auto=format&fit=crop"
             alt="Equipe em reunião criativa"
-            className="w-full h-full object-cover"
+            className="block w-full h-full object-cover max-h-[320px]"
+            loading="lazy"
           />
         </div>
       </section>
 
       {/* SERVIÇOS */}
-      <section id="servicos" className="py-16 border-t">
-        <h2 className="text-2xl md:text-3xl font-bold mb-3">
-          O que podemos fazer por você
-        </h2>
-        <p className="text-gray-600 max-w-prose">
-          Serviços pensados para empresas e organizações de impacto. Objetivo: ampliar
-          visibilidade, fortalecer reputação e criar relações consistentes.
-        </p>
-        <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[
-            {
-              title: "Relações com a imprensa",
-              desc:
-                "Criação de pautas e materiais estratégicos para fortalecer sua marca na mídia.",
-            },
-            {
-              title: "Redes sociais",
-              desc: "Planejamento e execução de conteúdo alinhado ao seu público.",
-            },
-            {
-              title: "Parcerias com influenciadores",
-              desc: "Conexões estratégicas para amplificar sua mensagem.",
-            },
-            {
-              title: "Planejamento de eventos",
-              desc: "Organização e divulgação de ações que destaquem sua marca.",
-            },
-            {
-              title: "Criação de conteúdo",
-              desc: "Textos e materiais que posicionam sua marca no mercado.",
-            },
-            {
-              title: "O que mais você precisa?",
-              desc: "Montamos um pacote sob medida, conforme sua necessidade.",
-            },
-          ].map((item) => (
-            <div
-              key={item.title}
-              className="rounded-2xl border bg-white p-6 shadow-sm hover:shadow-md transition"
-            >
-              <h3 className="font-semibold mb-2">{item.title}</h3>
-              <p className="text-sm text-gray-600">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-        <a
-          href="#contato"
-          className="inline-block mt-8 bg-[#FF4D00] text-white px-5 py-3 rounded-md hover:opacity-90"
-        >
-          Montar meu pacote
-        </a>
-      </section>
+      <section id="servicos" className="bg-gray-50 py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-2xl md:text-3xl font-bold">O que podemos fazer por você</h2>
+          <p className="mt-2 text-gray-600 max-w-prose">
+            Serviços pensados para empresas e organizações de impacto. Objetivo: ampliar visibilidade,
+            fortalecer reputação e criar relações consistentes.
+          </p>
 
-      {/* TOMAZELA LAB — (logo após “Serviços”) */}
-      <section className="py-16 border-t">
-        <div className="flex items-baseline justify-between mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#FF4D00]">
-            Tomazela Lab
-          </h2>
-          <a
-            href="/lab"
-            className="text-sm underline text-gray-700 hover:text-orange-700"
-          >
-            Ver todos os artigos →
+          <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {services.map((s) => (
+              <div key={s.title} className="rounded-2xl border bg-white p-6 shadow-sm hover:shadow-md transition">
+                <div className="mb-3">{s.icon}</div>
+                <h3 className="font-semibold mb-1">{s.title}</h3>
+                <p className="text-sm text-gray-600">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <a href="#contato" onClick={(e) => onScrollTo(e, "#contato")} className="inline-block mt-8 bg-[#FF4D00] text-white px-5 py-3 rounded-md hover:opacity-90">
+            Montar meu pacote
           </a>
         </div>
+      </section>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {postsHome.map((post) => (
-            <article
-              key={post.slug}
-              className="rounded-2xl border bg-white p-5 shadow-sm hover:shadow-md transition"
-            >
-              <a href={`/lab#${post.slug}`} aria-label={post.title}>
-                <div className="rounded-xl overflow-hidden aspect-[4/3] bg-gray-100">
-                  <img
-                    src={post.image}
-                    alt={post.title}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
+      {/* TOMAZELA LAB (logo após Serviços) */}
+      <section id="lab-preview" className="py-16 bg-white">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex items-end justify-between gap-4">
+            <h2 className="text-2xl md:text-3xl font-bold">Tomazela Lab</h2>
+            <a href="/lab" className="text-[#FF4D00] font-medium hover:underline">Ver todos os artigos</a>
+          </div>
+
+          <div className="mt-8 grid md:grid-cols-3 gap-6">
+            {postsHome.map((p) => (
+              <article key={p.title} className="rounded-2xl border bg-white p-5 shadow-sm hover:shadow-md transition">
+                <div className="rounded-lg overflow-hidden mb-4">
+                  <img src={p.img} alt="" className="block w-full h-40 object-cover" loading="lazy" />
                 </div>
-                <h3 className="mt-4 font-semibold leading-snug hover:underline">
-                  {post.title}
-                </h3>
-              </a>
-              <p className="text-xs text-gray-500 mt-1">{post.date}</p>
-              <a
-                href={`/lab#${post.slug}`}
-                className="inline-block mt-3 text-sm font-medium text-[#FF4D00] hover:text-orange-800"
-              >
-                Ler mais →
-              </a>
-            </article>
-          ))}
+                <h3 className="font-semibold leading-snug">{p.title}</h3>
+                <p className="text-xs text-gray-500 mt-1">{p.date}</p>
+                <a href={p.href} className="inline-block mt-3 text-sm font-medium text-[#FF4D00] hover:text-orange-800">Ler mais →</a>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* O QUE DIZEM */}
-      <section className="py-16 border-t">
-        <h2 className="text-2xl md:text-3xl font-bold mb-8">
-          O que dizem sobre nosso trabalho
-        </h2>
-        <div className="grid md:grid-cols-2 gap-6">
-          <blockquote className="bg-white border rounded-2xl p-6 shadow-sm">
-            <p className="italic text-gray-700">
-              “Profissional ágil, estratégico e colaborativo. Nossas entregas
-              ganharam clareza e tração.”
-            </p>
-            <footer className="mt-4 text-sm text-gray-600">
-              — Érika Martins de Figueiredo, via LinkedIn
-            </footer>
-          </blockquote>
-          <blockquote className="bg-white border rounded-2xl p-6 shadow-sm">
-            <p className="italic text-gray-700">
-              “Visão integrada e capacidade de execução acima da média. Recomendo o
-              trabalho.”
-            </p>
-            <footer className="mt-4 text-sm text-gray-600">
-              — Elaine Nishiwaki, via LinkedIn
-            </footer>
-          </blockquote>
+      <section id="legado" className="py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-2xl md:text-3xl font-bold">O que dizem sobre nosso trabalho</h2>
+          <div className="mt-8 grid md:grid-cols-2 gap-6">
+            <figure className="p-6 rounded-xl border bg-gray-50">
+              <blockquote className="italic text-gray-800">
+                “Profissional ágil, estratégico e colaborativo. Nossas entregas ganharam clareza e tração.”
+              </blockquote>
+              <figcaption className="mt-4 text-sm text-gray-600">— Erika Martins de Figueiredo, via LinkedIn</figcaption>
+            </figure>
+            <figure className="p-6 rounded-xl border bg-gray-50">
+              <blockquote className="italic text-gray-800">
+                “Visão integrada e capacidade de execução acima da média. Recomendo o trabalho.”
+              </blockquote>
+              <figcaption className="mt-4 text-sm text-gray-600">— Elaine Nishiwaki, via LinkedIn</figcaption>
+            </figure>
+          </div>
         </div>
       </section>
 
-      {/* QUEM SOMOS (sua foto sem cortar) */}
-      <section id="sobre" className="py-16 border-t">
-        <div className="grid md:grid-cols-2 gap-10 items-center">
+      {/* QUEM SOMOS */}
+      <section id="sobre" className="py-16 bg-white">
+        <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-10 items-center">
           <div className="rounded-2xl overflow-hidden shadow bg-white flex items-center justify-center">
             <img
               src="/AE4C2D2A-8E9D-438F-A285-37420BCDA4FF.jpeg"
@@ -242,19 +301,14 @@ export default function Home() {
           <div>
             <h2 className="text-2xl md:text-3xl font-bold">Quem é André Tomazela</h2>
             <p className="mt-4 text-gray-700">
-              Jornalista e estrategista de comunicação com experiência em empresas,
-              agências e projetos editoriais. Entrega clara, sem enrolação, com foco
-              em resultado.
+              Jornalista e estrategista de comunicação com experiência em empresas, agências e projetos editoriais.
+              Entrega clara, sem enrolação, com foco em resultado.
             </p>
             <p className="mt-3 text-gray-700">
-              Pós-graduação em Gestão da Comunicação em Mídias Digitais (Senac-SP).
-              Reportagens e especiais para o Valor Econômico. Atuação com organizações
-              de impacto e negócios.
+              Pós-graduação em Gestão da Comunicação em Mídias Digitais (Senac-SP). Reportagens e especiais para o Valor Econômico.
+              Atuação com organizações de impacto e negócios.
             </p>
-            <a
-              href="#contato"
-              className="inline-block mt-5 px-5 py-3 border rounded-md hover:bg-gray-50"
-            >
+            <a href="#contato" onClick={(e) => onScrollTo(e, "#contato")} className="inline-block mt-5 px-5 py-3 border rounded-md hover:bg-gray-50">
               Falar com o André
             </a>
           </div>
@@ -262,58 +316,71 @@ export default function Home() {
       </section>
 
       {/* CONTATO */}
-      <section id="contato" className="py-16 border-t">
-        <h2 className="text-2xl md:text-3xl font-bold mb-8">Vamos conversar?</h2>
-        <p className="text-gray-700 mb-6 max-w-2xl">
-          Conte rápido seu objetivo. Eu respondo com um caminho claro e um pacote
-          de soluções sob medida.
-        </p>
+      <section id="contato" className="py-16 bg-gradient-to-t from-orange-50 to-white border-t">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-2xl md:text-3xl font-bold">Vamos conversar?</h2>
+          <p className="mt-2 text-gray-700 max-w-prose">
+            Conte rápido seu objetivo. Eu respondo com um caminho claro e um pacote de soluções sob medida.
+          </p>
 
-        {status === "error" && (
-          <p className="text-red-600 mb-4 bg-red-50 border border-red-200 rounded-md p-3">
-            Não foi possível enviar agora. Tente novamente ou escreva para{" "}
-            <a
-              className="underline text-red-700"
-              href="mailto:andre@andretomazela.com.br"
+          <div className="mt-4" aria-live="polite">
+            {status === "success" && (
+              <div className="rounded-xl border border-green-200 bg-green-50 text-green-800 px-4 py-3">
+                Obrigado! Sua mensagem foi enviada. Em breve eu retorno.
+              </div>
+            )}
+            {status === "error" && (
+              <div className="rounded-xl border border-red-200 bg-red-50 text-red-800 px-4 py-3">
+                Não foi possível enviar agora. Tente novamente em alguns segundos ou escreva para{" "}
+                <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a>.
+              </div>
+            )}
+          </div>
+
+          <form onSubmit={submitForm} className="mt-6 grid md:grid-cols-3 gap-4">
+            <input name="Nome" className="col-span-1 rounded-xl border px-4 py-3" placeholder="Nome" required />
+            <input name="Email" type="email" className="col-span-1 rounded-xl border px-4 py-3" placeholder="E-mail" required />
+            <input name="Telefone" className="col-span-1 rounded-xl border px-4 py-3" placeholder="Telefone (opcional)" />
+            <textarea name="Mensagem" className="md:col-span-3 rounded-xl border px-4 py-3 min-h-[120px]" placeholder="Como posso ajudar?" required />
+            <button
+              type="submit"
+              disabled={status === "loading"}
+              className="rounded-2xl px-5 py-3 bg-[#FF4D00] text-white font-semibold shadow hover:shadow-lg w-fit disabled:opacity-60"
             >
-              andre@andretomazela.com.br
-            </a>
-            .
-          </p>
-        )}
-        {status === "success" && (
-          <p className="text-green-700 mb-4 bg-green-50 border border-green-200 rounded-md p-3">
-            Mensagem enviada com sucesso! Em breve entrarei em contato.
-          </p>
-        )}
+              {status === "loading" ? "Enviando..." : "Enviar"}
+            </button>
+          </form>
 
-        <form onSubmit={handleSubmit} className="grid md:grid-cols-3 gap-4 max-w-3xl">
-          <input name="Nome" className="rounded-xl border px-4 py-3" placeholder="Nome" required />
-          <input name="Email" type="email" className="rounded-xl border px-4 py-3" placeholder="E-mail" required />
-          <input name="Telefone" className="rounded-xl border px-4 py-3" placeholder="Telefone (opcional)" />
-          <textarea
-            name="Mensagem"
-            className="md:col-span-3 rounded-xl border px-4 py-3 min-h-[120px]"
-            placeholder="Como posso ajudar?"
-            required
-          />
-          <button
-            type="submit"
-            disabled={status === "loading"}
-            className="rounded-2xl px-5 py-3 bg-[#FF4D00] text-white font-semibold shadow hover:shadow-lg w-fit disabled:opacity-60"
-          >
-            {status === "loading" ? "Enviando..." : "Enviar"}
-          </button>
-        </form>
-
-        <div className="mt-8 flex items-center gap-4 text-sm text-gray-700">
-          <a href="https://wa.me/message/TUNCL3KFQIECM1" className="hover:text-[#FF4D00]">WhatsApp</a>
-          <span>•</span>
-          <a href="https://www.linkedin.com/in/tomazela/" className="hover:text-[#FF4D00]">LinkedIn</a>
-          <span>•</span>
-          <a href="https://www.instagram.com/tomazela.comunica/" className="hover:text-[#FF4D00]">Instagram</a>
+          <div className="mt-6 text-sm text-gray-600 flex flex-wrap gap-4 items-center">
+            <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a>
+            <span>•</span>
+            <a className="underline" href="https://wa.me/message/TUNCL3KFQIECM1" target="_blank" rel="noreferrer">WhatsApp</a>
+            <span>•</span>
+            <a className="underline" href="https://www.linkedin.com/in/tomazela/" target="_blank" rel="noreferrer">LinkedIn</a>
+            <span>•</span>
+            <a className="underline" href="https://www.instagram.com/tomazela.comunica/" target="_blank" rel="noreferrer">Instagram</a>
+          </div>
         </div>
       </section>
+
+      {/* FOOTER */}
+      <footer className="bg-[#FF4D00] py-10 text-center text-white">
+        <div className="mx-auto mb-4 w-[220px] md:w-[300px]">
+          <img
+            src="/logo-tomazela-br-fundotransp.png?v=9"
+            alt="Logo Tomazela branco"
+            className="block w-full h-auto object-contain"
+          />
+        </div>
+        <p className="text-sm">Santa Cecília | São Paulo-SP</p>
+        <p className="text-sm mt-1">
+          <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a> ·{" "}
+          <a className="underline" href="https://wa.me/message/TUNCL3KFQIECM1" target="_blank" rel="noreferrer">WhatsApp</a>
+        </p>
+        <p className="text-xs mt-3 opacity-90">
+          © {new Date().getFullYear()} Tomazela | Estratégia & Comunicação
+        </p>
+      </footer>
     </div>
   );
 }
