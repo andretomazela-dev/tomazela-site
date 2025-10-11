@@ -38,7 +38,7 @@ export default function LabPage() {
     <div className="max-w-6xl mx-auto px-4 py-12" id="lab">
       <div className="flex items-baseline justify-between">
         <h1 className="text-3xl md:text-4xl font-extrabold text-[#FF4D00]">Tomazela Lab</h1>
-        <a href="/" className="text-sm underline hover:text-orange-700">← Voltar para a Home</a>
+        <a href="/" className="text-sm underline hover:text-orange-700">Voltar para a Home</a>
       </div>
       <p className="text-gray-700 mt-3 max-w-2xl">
         Ensaios e reflexões sobre comunicação, cultura e impacto — com método, honestidade e curiosidade.
@@ -58,7 +58,7 @@ export default function LabPage() {
       </div>
 
       <div className="mt-10">
-        <a href="/" className="inline-block border px-5 py-3 rounded-xl hover:bg-gray-50">← Voltar para a Home</a>
+        <a href="/" className="inline-block border px-5 py-3 rounded-xl hover:bg-gray-50">Voltar para a Home</a>
       </div>
     </div>
   );
