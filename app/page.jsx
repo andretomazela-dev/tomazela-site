@@ -1,20 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 /* =========================================================
    Tomazela | Estratégia & Comunicação — Home (App Router)
-   - Navbar: Serviços • Tomazela Lab (/lab) • Quem somos • Contato
-   - Logos: /public/logo-tomazela.png e /public/logo-tomazela-br-fundotransp.png (object-contain, bust ?v=9)
-   - Hero com imagem ilustrativa
-   - Serviços com ícones SVG monocromáticos (linguagem moderna)
-   - Tomazela Lab: 3 artigos em cards (logo após Serviços)
-   - Quem somos: foto do André sem cortar rosto
-   - Contato: Formspree (meorrlvp) com feedback
-   - Footer: logo branco + contatos
    ========================================================= */
 
-// Ícones SVG monocromáticos (laranja da marca)
+// Ícones monocromáticos modernos
 const Icon = {
   Press: (props) => (
     <svg viewBox="0 0 24 24" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7" {...props}>
@@ -67,15 +59,15 @@ const Icon = {
 };
 
 const services = [
-  { icon: <Icon.Press />,       title: "Relações com a imprensa",      desc: "Criação de pautas e materiais estratégicos para fortalecer sua marca na mídia." },
-  { icon: <Icon.Social />,      title: "Redes sociais",                 desc: "Planejamento e execução de conteúdo alinhado ao seu público." },
+  { icon: <Icon.Press />, title: "Relações com a imprensa", desc: "Criação de pautas e materiais estratégicos para fortalecer sua marca na mídia." },
+  { icon: <Icon.Social />, title: "Redes sociais", desc: "Planejamento e execução de conteúdo alinhado ao seu público." },
   { icon: <Icon.Influencers />, title: "Parcerias com influenciadores", desc: "Conexões estratégicas para amplificar sua mensagem." },
-  { icon: <Icon.Events />,      title: "Planejamento de eventos",       desc: "Organização e divulgação de ações que destaquem sua marca." },
-  { icon: <Icon.Content />,     title: "Criação de conteúdo",           desc: "Textos e materiais que posicionam sua marca no mercado." },
-  { icon: <Icon.Custom />,      title: "O que mais você precisa?",      desc: "Montamos um pacote sob medida, conforme sua necessidade." },
+  { icon: <Icon.Events />, title: "Planejamento de eventos", desc: "Organização e divulgação de ações que destaquem sua marca." },
+  { icon: <Icon.Content />, title: "Criação de conteúdo", desc: "Textos e materiais que posicionam sua marca no mercado." },
+  { icon: <Icon.Custom />, title: "O que mais você precisa?", desc: "Montamos um pacote sob medida, conforme sua necessidade." },
 ];
 
-// 3 posts para a home (cards com link para /lab)
+// 3 posts para preview do Lab
 const postsHome = [
   {
     title: "Gaslighting no trabalho: como reconhecer e agir",
@@ -98,22 +90,7 @@ const postsHome = [
 ];
 
 export default function HomePage() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [status, setStatus] = useState("idle"); // idle | loading | success | error
-
-  useEffect(() => {
-    const onResize = () => {
-      if (window.innerWidth >= 768) setMenuOpen(false);
-    };
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-
-  const onScrollTo = (e, id) => {
-    e.preventDefault();
-    document.querySelector(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-    setMenuOpen(false);
-  };
+  const [status, setStatus] = useState("idle");
 
   const submitForm = async (e) => {
     e.preventDefault();
@@ -132,57 +109,13 @@ export default function HomePage() {
       } else {
         setStatus("error");
       }
-    } catch (err) {
+    } catch {
       setStatus("error");
     }
   };
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
-      {/* HEADER */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <a href="#home" onClick={(e) => onScrollTo(e, "#home")} className="flex items-center gap-3">
-            <div className="w-[200px] md:w-[260px]">
-              <img
-                src="/logo-tomazela.png?v=9"
-                alt="Tomazela | Estratégia & Comunicação"
-                className="block w-full h-auto object-contain"
-              />
-            </div>
-          </a>
-
-          <nav className="hidden md:flex items-center gap-6 text-sm">
-            <a href="#servicos" onClick={(e) => onScrollTo(e, "#servicos")} className="hover:text-[#FF4D00]">Serviços</a>
-            <a href="/lab" className="hover:text-[#FF4D00]" aria-label="Tomazela Lab">Tomazela Lab</a>
-            <a href="#sobre" onClick={(e) => onScrollTo(e, "#sobre")} className="hover:text-[#FF4D00]">Quem somos</a>
-            <a
-              href="#contato"
-              onClick={(e) => onScrollTo(e, "#contato")}
-              className="bg-[#FF4D00] text-white px-4 py-2 rounded-md hover:opacity-90 transition"
-            >
-              Fale com a gente
-            </a>
-          </nav>
-
-          <button className="md:hidden p-2 border rounded-md" onClick={() => setMenuOpen((v) => !v)} aria-label="Abrir menu">
-            ☰
-          </button>
-        </div>
-
-        {menuOpen && (
-          <div className="md:hidden border-t">
-            <div className="px-4 py-3 flex flex-col gap-3">
-              <a href="#servicos" onClick={(e) => onScrollTo(e, "#servicos")} className="py-1">Serviços</a>
-              <a href="/lab" className="py-1">Tomazela Lab</a>
-              <a href="#sobre" onClick={(e) => onScrollTo(e, "#sobre")} className="py-1">Quem somos</a>
-              <a href="#contato" onClick={(e) => onScrollTo(e, "#contato")} className="py-2 bg-[#FF4D00] text-white text-center rounded-md">
-                Fale com a gente
-              </a>
-            </div>
-          </div>
-        )}
-      </header>
 
       {/* HERO */}
       <section id="home" className="max-w-6xl mx-auto px-4 py-16 md:py-24 grid md:grid-cols-2 gap-10 items-center">
@@ -191,11 +124,10 @@ export default function HomePage() {
             Comunicação sob medida para marcas e organizações de impacto.
           </h1>
           <p className="mt-4 text-lg text-gray-700">
-            Estratégia que posiciona, conteúdo que entrega e relações que abrem portas.
-            Clareza, método e impacto em cada projeto.
+            Estratégia que posiciona, conteúdo que entrega e relações que abrem portas. Clareza, método e impacto em cada projeto.
           </p>
           <div className="mt-6 flex gap-3">
-            <a href="#servicos" onClick={(e) => onScrollTo(e, "#servicos")} className="bg-[#FF4D00] text-white px-5 py-3 rounded-md hover:opacity-90">
+            <a href="#servicos" className="bg-[#FF4D00] text-white px-5 py-3 rounded-md hover:opacity-90">
               Ver serviços
             </a>
             <a href="/lab" className="px-5 py-3 rounded-md border hover:border-gray-400">
@@ -204,7 +136,9 @@ export default function HomePage() {
           </div>
           <p className="mt-6 text-sm text-gray-600">
             São Paulo • Brasil •{" "}
-            <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a>
+            <a className="underline" href="mailto:andre@andretomazela.com.br">
+              andre@andretomazela.com.br
+            </a>
           </p>
         </div>
 
@@ -213,7 +147,6 @@ export default function HomePage() {
             src="https://images.unsplash.com/photo-1552581234-26160f608093?q=80&w=1600&auto=format&fit=crop"
             alt="Equipe em reunião criativa"
             className="block w-full h-full object-cover max-h-[320px]"
-            loading="lazy"
           />
         </div>
       </section>
@@ -223,8 +156,7 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold">O que podemos fazer por você</h2>
           <p className="mt-2 text-gray-600 max-w-prose">
-            Serviços pensados para empresas e organizações de impacto. Objetivo: ampliar visibilidade,
-            fortalecer reputação e criar relações consistentes.
+            Serviços pensados para empresas e organizações de impacto. Objetivo: ampliar visibilidade, fortalecer reputação e criar relações consistentes.
           </p>
 
           <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -237,52 +169,35 @@ export default function HomePage() {
             ))}
           </div>
 
-          <a href="#contato" onClick={(e) => onScrollTo(e, "#contato")} className="inline-block mt-8 bg-[#FF4D00] text-white px-5 py-3 rounded-md hover:opacity-90">
+          <a href="#contato" className="inline-block mt-8 bg-[#FF4D00] text-white px-5 py-3 rounded-md hover:opacity-90">
             Montar meu pacote
           </a>
         </div>
       </section>
 
-      {/* TOMAZELA LAB (logo após Serviços) */}
+      {/* LAB PREVIEW */}
       <section id="lab-preview" className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-end justify-between gap-4">
             <h2 className="text-2xl md:text-3xl font-bold">Tomazela Lab</h2>
-            <a href="/lab" className="text-[#FF4D00] font-medium hover:underline">Ver todos os artigos</a>
+            <a href="/lab" className="text-[#FF4D00] font-medium hover:underline">
+              Ver todos os artigos
+            </a>
           </div>
 
           <div className="mt-8 grid md:grid-cols-3 gap-6">
             {postsHome.map((p) => (
               <article key={p.title} className="rounded-2xl border bg-white p-5 shadow-sm hover:shadow-md transition">
                 <div className="rounded-lg overflow-hidden mb-4">
-                  <img src={p.img} alt="" className="block w-full h-40 object-cover" loading="lazy" />
+                  <img src={p.img} alt="" className="block w-full h-40 object-cover" />
                 </div>
                 <h3 className="font-semibold leading-snug">{p.title}</h3>
                 <p className="text-xs text-gray-500 mt-1">{p.date}</p>
-                <a href={p.href} className="inline-block mt-3 text-sm font-medium text-[#FF4D00] hover:text-orange-800">Ler mais →</a>
+                <a href={p.href} className="inline-block mt-3 text-sm font-medium text-[#FF4D00] hover:text-orange-800">
+                  Ler mais →
+                </a>
               </article>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* O QUE DIZEM */}
-      <section id="legado" className="py-16">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold">O que dizem sobre nosso trabalho</h2>
-          <div className="mt-8 grid md:grid-cols-2 gap-6">
-            <figure className="p-6 rounded-xl border bg-gray-50">
-              <blockquote className="italic text-gray-800">
-                “Profissional ágil, estratégico e colaborativo. Nossas entregas ganharam clareza e tração.”
-              </blockquote>
-              <figcaption className="mt-4 text-sm text-gray-600">— Erika Martins de Figueiredo, via LinkedIn</figcaption>
-            </figure>
-            <figure className="p-6 rounded-xl border bg-gray-50">
-              <blockquote className="italic text-gray-800">
-                “Visão integrada e capacidade de execução acima da média. Recomendo o trabalho.”
-              </blockquote>
-              <figcaption className="mt-4 text-sm text-gray-600">— Elaine Nishiwaki, via LinkedIn</figcaption>
-            </figure>
           </div>
         </div>
       </section>
@@ -295,7 +210,6 @@ export default function HomePage() {
               src="/AE4C2D2A-8E9D-438F-A285-37420BCDA4FF.jpeg"
               alt="André Tomazela"
               className="block w-full h-auto object-contain max-h-[480px]"
-              loading="lazy"
             />
           </div>
           <div>
@@ -308,7 +222,7 @@ export default function HomePage() {
               Pós-graduação em Gestão da Comunicação em Mídias Digitais (Senac-SP). Reportagens e especiais para o Valor Econômico.
               Atuação com organizações de impacto e negócios.
             </p>
-            <a href="#contato" onClick={(e) => onScrollTo(e, "#contato")} className="inline-block mt-5 px-5 py-3 border rounded-md hover:bg-gray-50">
+            <a href="#contato" className="inline-block mt-5 px-5 py-3 border rounded-md hover:bg-gray-50">
               Falar com o André
             </a>
           </div>
@@ -362,25 +276,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* FOOTER */}
-      <footer className="bg-[#FF4D00] py-10 text-center text-white">
-        <div className="mx-auto mb-4 w-[220px] md:w-[300px]">
-          <img
-            src="/logo-tomazela-br-fundotransp.png?v=9"
-            alt="Logo Tomazela branco"
-            className="block w-full h-auto object-contain"
-          />
-        </div>
-        <p className="text-sm">Santa Cecília | São Paulo-SP</p>
-        <p className="text-sm mt-1">
-          <a className="underline" href="mailto:andre@andretomazela.com.br">andre@andretomazela.com.br</a> ·{" "}
-          <a className="underline" href="https://wa.me/message/TUNCL3KFQIECM1" target="_blank" rel="noreferrer">WhatsApp</a>
-        </p>
-        <p className="text-xs mt-3 opacity-90">
-          © {new Date().getFullYear()} Tomazela | Estratégia & Comunicação
-        </p>
-      </footer>
     </div>
   );
 }
