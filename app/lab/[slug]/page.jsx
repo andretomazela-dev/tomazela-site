@@ -25,7 +25,7 @@ export default async function PostPage({ params }) {
 
   return (
     <main className="max-w-3xl mx-auto px-4 py-14">
-      <Link href="/lab/1" className="text-sm underline text-gray-600 hover:text-gray-900">
+      <Link href="/lab/page/1" className="text-sm underline text-gray-600 hover:text-gray-900">
         ← Voltar ao Tomazela Lab
       </Link>
 
@@ -39,8 +39,10 @@ export default async function PostPage({ params }) {
           </div>
         )}
 
-        <div className="prose prose-lg max-w-none mt-6 prose-a:text-[#FF4D00] prose-img:rounded-xl"
-             dangerouslySetInnerHTML={{ __html: post.html }} />
+        <div
+          className="prose prose-lg max-w-none mt-6 prose-a:text-[#FF4D00] prose-img:rounded-xl"
+          dangerouslySetInnerHTML={{ __html: post.html }}
+        />
       </article>
     </main>
   );

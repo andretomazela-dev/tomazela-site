@@ -7,5 +7,5 @@ export const metadata = {
 };
 
 export default function LabIndex() {
-  redirect("/lab/1");
+  redirect("/lab/page/1");
 }
