@@ -1,8 +1,0 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-:root { --brand: #FF4D00; }
-html { scroll-behavior: smooth; }
-body { color: #111827; background: #ffffff; }
-.anchor { scroll-margin-top: 96px; }
